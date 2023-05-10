@@ -9,12 +9,14 @@ import {JwtModule} from "@nestjs/jwt";
 import {TokenModule} from "../token/token.module";
 import {UsersModule} from "../users/users.module";
 import {ClientsModule, Transport} from "@nestjs/microservices";
+import {MailService} from "../mailer/mail.service";
+import {MailModule} from "../mailer/mail.module";
 
 
 @Module({
   controllers: [AuthController],
   providers: [AuthService],
-  imports: [ClientsModule.register([
+  imports: [MailModule, ClientsModule.register([
       {
           name: 'AUTH_SERVICE',
           transport: Transport.RMQ,

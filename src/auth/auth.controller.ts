@@ -1,6 +1,6 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, Inject, Post, Req, Res, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Post, Query, Req, Res, UsePipes} from '@nestjs/common';
 
 import {AuthService} from "./auth.service";
 import {Response} from "express";
@@ -9,14 +9,22 @@ import {AuthUserDto} from "../users/dto/auth-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import {ClientProxy} from "@nestjs/microservices";
+import {MailService} from "../mailer/mail.service";
 
 
 
-@Controller('auth')
+@Controller('/auth')
 export class AuthController {
 
     constructor(private authService: AuthService,
+                private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
+
+    @Get('verify')
+    async verify(@Query('token') token: string) {
+        const result = await this.authService.verify(token);
+        return { message: `${result || 'Verification successful'}` };
+    }
 
     @UsePipes(ValidationPipe)
     @Post('/login')

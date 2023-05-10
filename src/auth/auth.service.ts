@@ -1,14 +1,23 @@
 //nest generate service auth создано командой
 
-import {HttpException, HttpStatus, Inject, Injectable, UnauthorizedException} from '@nestjs/common';
-import {JwtService} from "@nestjs/jwt";
+import {
+    BadRequestException,
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    UnauthorizedException
+} from '@nestjs/common';
+
 import {UsersService} from "../users/users.service";
 import {TokenService} from "../token/token.service";
 import {AuthUserDto} from "../users/dto/auth-user.dto";
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import * as bcrypt from 'bcryptjs';
 import {ClientProxy} from "@nestjs/microservices";
-import {firstValueFrom} from "rxjs";
+import {JwtService} from "@nestjs/jwt";
+import * as crypto from 'crypto';
+import {MailService} from "../mailer/mail.service";
 
 
 @Injectable()
@@ -17,6 +26,7 @@ export class AuthService {
     constructor(private userService: UsersService,
                 private jwtService: JwtService,
                 private tokenService: TokenService,
+                private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     async login(userDto: AuthUserDto ) {
@@ -31,18 +41,21 @@ export class AuthService {
         const candidate = await this.userService.getUserByEmail(userDto.email);
         if (candidate) {
             throw new HttpException(`Пользователь с таким ${userDto.email} 
-            уже существует`, HttpStatus.BAD_REQUEST)
+            уже существует`, HttpStatus.BAD_REQUEST);
         }
         // получаем закодированный пароль
         const hasPassword = await bcrypt.hash(userDto.password, 6);
+        // создаем токен для активации по почте
+        const tokenVerification = this.generateVerificationToken();
         //создаем пользователя
-        const user = await this.userService.createUser({...userDto, password: hasPassword})
-        userDto.userId = user.id;
-        const profileDate = JSON.stringify({'fullName': userDto.fullName, 'phone': userDto.phone,
-            'age': userDto.age, 'city': userDto.city, 'userId': user.id});
-        this.client.emit('creatProfile', `${profileDate}`);
-        const tokens = await this.tokenService.generateToken(user);// возрашает токен на основе данных пользователя
-        await this.tokenService.saveToken(user.id, tokens.refreshToken)
+        const user = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
+
+        // оправляем ссылку активации на почту
+        await this.mailService.sendMail(user.email, tokenVerification);
+
+        // возрашает токен на основе данных пользователя
+        const tokens = await this.tokenService.generateToken(user);
+        await this.tokenService.saveToken(user.id, tokens.refreshToken);
         return {...tokens};
     }
 
@@ -63,8 +76,15 @@ export class AuthService {
         return token;
     }
 
-    async go() {
-        this.client.emit('creatProfile', "hello 777777 man");
+    private generateVerificationToken() {
+        return crypto.randomBytes(20).toString('hex');
     }
 
+    async verify(token: string) {
+        const user = await this.userService.findByVerificationToken(token);
+        if (!user) {
+            throw new BadRequestException('Invalid verification token');
+        }
+       return await this.userService.updateVerificationStatus(user);
+    }
 }

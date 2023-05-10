@@ -43,4 +43,12 @@ export class User extends Model<User, USerCreationAttrs> {
 
     @HasOne(() => Token)
     userToken: Token;
+
+    @Column({type: DataType.BOOLEAN})
+    verificationStatus: boolean;
+
+    @Column({type: DataType.STRING})
+    verificationToken: string
+
+
 }

@@ -2,6 +2,8 @@ import {CanActivate, ExecutionContext, Injectable, UnauthorizedException} from "
 import {JwtService} from "@nestjs/jwt";
 import {Observable} from "rxjs";
 
+
+
 // для проверки авторизации пользователя и запрете доступа при ее отсутвии
 @Injectable()
 export class JwtAuthGuard implements CanActivate {

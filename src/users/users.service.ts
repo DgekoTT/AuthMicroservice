@@ -98,4 +98,25 @@ export class UsersService {
         const user = await this.checkUser(id);
         return user;
     }
+
+    async findByVerificationToken(token: string) {
+        const user = await this.userRepository.findOne({where: { 
+            verificationToken: token
+            }
+        });
+        return user;
+    }
+
+    async updateVerificationStatus(user: User): Promise<any>{
+        try {
+            const result = await user.update({verificationStatus: true}, {
+                where: {
+                    id: user.id
+                }
+            })
+        } catch(e) {
+                return (e.message)
+            }
+
+    }
 }

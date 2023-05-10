@@ -13,8 +13,8 @@ export class RolesController {
     constructor(private roleService: RolesService) {
     }
 
-    @Roles("admin")
-    @UseGuards(RolesGuard)
+    // @Roles("admin")
+    // @UseGuards(RolesGuard)
     @Post()
     create(@Body() dto: CreateRoleDto) {
         return this.roleService.createRole(dto)
