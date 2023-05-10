@@ -21,4 +21,4 @@ EXPOSE 4020
 
 
 # Запускаем приложение
-CMD npm run start
+CMD npm run start:Auth-docker
