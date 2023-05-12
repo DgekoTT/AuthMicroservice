@@ -21,7 +21,6 @@ import {MailService} from "../mailer/mail.service";
 import {UserGoogle} from "./utils/googleTypes";
 import {InjectModel} from "@nestjs/sequelize";
 import {UsersGoogle} from "./strategy/google/google.model";
-import {where} from "sequelize";
 
 
 @Injectable()
