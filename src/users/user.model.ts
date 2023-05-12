@@ -8,6 +8,7 @@ import {Token} from "../token/token.model";
 interface USerCreationAttrs {
     email: string;
     password: string;
+    nickName: string;
 }
 
 @Table({tableName: 'users'})//появится таблица с именем users
@@ -18,6 +19,8 @@ export class User extends Model<User, USerCreationAttrs> {
     //получим id как число, уникальное автозаполненеие 1..2..3
     id: number;
 
+    @Column({type: DataType.STRING, unique: true, allowNull: false})
+    nickName: string;
 
     //allowNull: false не должен быть пустым
     @Column({type: DataType.STRING, unique: true, allowNull: false})
@@ -49,6 +52,4 @@ export class User extends Model<User, USerCreationAttrs> {
 
     @Column({type: DataType.STRING})
     verificationToken: string
-
-
 }

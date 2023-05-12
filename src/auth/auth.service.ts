@@ -18,6 +18,10 @@ import {ClientProxy} from "@nestjs/microservices";
 import {JwtService} from "@nestjs/jwt";
 import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
+import {UserGoogle} from "./utils/googleTypes";
+import {InjectModel} from "@nestjs/sequelize";
+import {UsersGoogle} from "./strategy/google/google.model";
+import {where} from "sequelize";
 
 
 @Injectable()
@@ -27,13 +31,13 @@ export class AuthService {
                 private jwtService: JwtService,
                 private tokenService: TokenService,
                 private mailService: MailService,
+                @InjectModel(UsersGoogle) private googleRepository: typeof UsersGoogle,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     async login(userDto: AuthUserDto ) {
         const user = await this.validateUser(userDto);
         const tokens =  await this.tokenService.generateToken(user);
         await this.tokenService.saveToken(user.id, tokens.refreshToken)
-        console.log(tokens)
         return {...tokens};
     }
 
@@ -72,8 +76,7 @@ export class AuthService {
     }
 
     async logout(refreshToken) {
-        const token = await this.tokenService.removeToken(refreshToken);
-        return token;
+        return await this.tokenService.removeToken(refreshToken);
     }
 
     private generateVerificationToken() {
@@ -86,5 +89,20 @@ export class AuthService {
             throw new BadRequestException('Invalid verification token');
         }
        return await this.userService.updateVerificationStatus(user);
+    }
+
+    async validateGoogle(info: UserGoogle): Promise<UsersGoogle> {
+        const user = await this.googleRepository.findOne({
+            where: {
+                email: info.email
+            }
+        })
+        if(user) return user;
+
+        return  await this.googleRepository.create({...info, role: 'USER'});
+    }
+
+    async findGoogleUser(id: number) : Promise<UsersGoogle> {
+        return await this.googleRepository.findOne({where: {id: id}})
     }
 }

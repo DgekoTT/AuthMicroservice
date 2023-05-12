@@ -11,11 +11,21 @@ import {UsersModule} from "../users/users.module";
 import {ClientsModule, Transport} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
 import {MailModule} from "../mailer/mail.module";
+import {GoogleStrategy} from "./strategy/google/google.strategy";
+import {UsersGoogle} from "./strategy/google/google.model";
+import {SequelizeModule} from "@nestjs/sequelize";
+import {User} from "../users/user.model";
+import {Role} from "../roles/roles.model";
+import {UserRoles} from "../roles/user-role.model";
+import {Token} from "../token/token.model";
+import {PassportModule} from "@nestjs/passport";
+import {SessionSerializer} from "./strategy/google/Serializer";
+import {VkStrategy} from "./strategy/vk/vk.strategy";
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy, VkStrategy, SessionSerializer],
   imports: [MailModule, ClientsModule.register([
       {
           name: 'AUTH_SERVICE',
@@ -29,6 +39,7 @@ import {MailModule} from "../mailer/mail.module";
           },
       },
   ]),
+      SequelizeModule.forFeature([UsersGoogle]),
       TokenModule,
       forwardRef(() => UsersModule) ,/* если не использовать форвард
       то будет круговая зависимость и выдаст ошибку */
@@ -37,11 +48,12 @@ import {MailModule} from "../mailer/mail.module";
           signOptions: {//время жизни токена
             expiresIn: '24h'
           }
-      })
+      }),
+      PassportModule.register({session: true})
   ],
     exports : [
         AuthService,
-        JwtModule
+        JwtModule,
     ]
 })
 export class AuthModule {}

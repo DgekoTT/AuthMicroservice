@@ -1,6 +1,6 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, Inject, Post, Query, Req, Res, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Post, Query, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
 
 import {AuthService} from "./auth.service";
 import {Response} from "express";
@@ -10,6 +10,8 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import {ClientProxy} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
+import {GoogleGuard} from "./strategy/google/google.guard";
+import {VKGuard} from "./strategy/vk/vk.guard";
 
 
 
@@ -24,6 +26,30 @@ export class AuthController {
     async verify(@Query('token') token: string) {
         const result = await this.authService.verify(token);
         return { message: `${result || 'Verification successful'}` };
+    }
+
+    @Get('google/login')
+    @UseGuards(GoogleGuard)
+    googleLogin() {
+        return { msg: "Google Авторизация"};
+    }
+
+    @Get('google/redirect')
+    @UseGuards(GoogleGuard)
+    googleRedirect() {
+        return { msg: "Google redirect"};
+    }
+
+    @Get('vkontakte/login')
+    @UseGuards(VKGuard)
+    vkLogin() {
+        return { msg: "VK Авторизация"};
+    }
+
+    @Get('vkontakte/callback')
+    @UseGuards(VKGuard)
+    vkRedirect() {
+        return { msg: "VK redirect"};
     }
 
     @UsePipes(ValidationPipe)
@@ -69,6 +95,16 @@ export class AuthController {
 
         response.cookie('refreshToken', userInfo.refreshToken, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
+    }
+
+    @Get('status')
+    user(@Req() request: Request) {
+        console.log(request.user);
+        if (request.user) {
+            return { msg: 'Authenticated' };
+        } else {
+            return { msg: 'Not Authenticated' };
+        }
     }
 
 
