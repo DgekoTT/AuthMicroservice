@@ -8,19 +8,29 @@ import {RolesService} from "../roles/roles.service";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import {ClientProxy} from "@nestjs/microservices";
-import {Observable} from "rxjs";
-import {HttpService} from "@nestjs/axios";
+import { randomBytes } from 'crypto';
+import {MailService} from "../mailer/mail.service";
+import {TokenService} from "../token/token.service";
+import {use} from "passport";
 
 @Injectable()
 export class UsersService {
 
     constructor(@InjectModel(User) private userRepository: typeof User,
                 private roleService: RolesService,
+                private mailService: MailService,
+                private tokenService: TokenService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     async createUser(dto: CreateUserDto) {
-        //создаем пользователя
-        const user = await this.userRepository.create(dto);
+        let user;
+        if(dto.password){
+            //создаем пользователя
+             user = await this.userRepository.create({...dto, provider: `mail`});
+        } else {
+            user = await this.makeGoogleOrVkUser(dto);
+            await this.tokenService.saveToken(user.id, dto.verificationToken)
+        }
         //получаем роль из базы
         const role = await this.roleService.getRoleByValue("USER") ;
         //перезаписаваем значение атрибу роль у пользователя в виде ид роли
@@ -30,13 +40,11 @@ export class UsersService {
     }
 
     async getAllUser() {
-        const users = await this.userRepository.findAll({include: {all: true}});
-        return users;
+       return  await this.userRepository.findAll({include: {all: true}});
     }
 
     async getUserByEmail(email: string) {
-        const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
-        return user
+        return  await this.userRepository.findOne({where: {email}, include: {all: true}})
     }
 
     async addRole(dto: AddRoleDto){
@@ -95,16 +103,16 @@ export class UsersService {
     }
 
     async getUserById(id: number): Promise<User> {
-        const user = await this.checkUser(id);
-        return user;
+        return  await this.checkUser(id);
+
     }
 
     async findByVerificationToken(token: string) {
-        const user = await this.userRepository.findOne({where: { 
+        return await this.userRepository.findOne({where: {
             verificationToken: token
             }
         });
-        return user;
+
     }
 
     async updateVerificationStatus(user: User): Promise<any>{
@@ -118,5 +126,11 @@ export class UsersService {
                 return (e.message)
             }
 
+    }
+
+    private async makeGoogleOrVkUser(dto: CreateUserDto):Promise<User> {
+        const password = randomBytes(14).toString('hex');
+        this.mailService.sendMailPass(dto.email, password)
+        return await this.userRepository.create({...dto, password: password, verificationStatus: true})
     }
 }

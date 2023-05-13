@@ -1,4 +1,4 @@
-import {Strategy, Profile, VerifyCallback, Params} from "passport-vkontakte";
+import {Strategy, VerifyCallback} from "passport-vkontakte";
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 @Injectable()

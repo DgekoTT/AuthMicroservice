@@ -13,7 +13,7 @@ import {Token} from "./token/token.model";
 import {ConfigModule} from "@nestjs/config";
 import {MailModule} from "./mailer/mail.module";
 import {PassportModule} from "@nestjs/passport";
-import {UsersGoogle} from "./auth/strategy/google/google.model";
+
 
 
 
@@ -31,7 +31,7 @@ import {UsersGoogle} from "./auth/strategy/google/google.model";
     username: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
-    models: [User, Role, UserRoles, Token, UsersGoogle],
+    models: [User, Role, UserRoles, Token],
     autoLoadModels: true
   }),
       PassportModule.register({ session: true }),

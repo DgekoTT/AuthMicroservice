@@ -8,7 +8,9 @@ import {Token} from "../token/token.model";
 interface USerCreationAttrs {
     email: string;
     password: string;
-    nickName: string;
+    displayName: string;
+    provider: string;
+    verificationStatus?: boolean;
 }
 
 @Table({tableName: 'users'})//появится таблица с именем users
@@ -20,20 +22,20 @@ export class User extends Model<User, USerCreationAttrs> {
     id: number;
 
     @Column({type: DataType.STRING, unique: true, allowNull: false})
-    nickName: string;
+    displayName: string;
 
     //allowNull: false не должен быть пустым
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     email: string;
 
-
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
-
 
     @Column({type: DataType.BOOLEAN, defaultValue: false})
     banned: boolean;
 
+    @Column({type: DataType.STRING, allowNull: true})
+    provider: string;
 
     @Column({type: DataType.STRING, allowNull: true})
     banReason: string;
@@ -52,4 +54,6 @@ export class User extends Model<User, USerCreationAttrs> {
 
     @Column({type: DataType.STRING})
     verificationToken: string
+
+
 }

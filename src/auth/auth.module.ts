@@ -11,8 +11,6 @@ import {UsersModule} from "../users/users.module";
 import {ClientsModule, Transport} from "@nestjs/microservices";
 import {MailModule} from "../mailer/mail.module";
 import {GoogleStrategy} from "./strategy/google/google.strategy";
-import {UsersGoogle} from "./strategy/google/google.model";
-import {SequelizeModule} from "@nestjs/sequelize";
 import {PassportModule} from "@nestjs/passport";
 import {SessionSerializer} from "./strategy/google/Serializer";
 import {VkStrategy} from "./strategy/vk/vk.strategy";
@@ -34,7 +32,6 @@ import {VkStrategy} from "./strategy/vk/vk.strategy";
           },
       },
   ]),
-      SequelizeModule.forFeature([UsersGoogle]),
       TokenModule,
       forwardRef(() => UsersModule) ,/* если не использовать форвард
       то будет круговая зависимость и выдаст ошибку */

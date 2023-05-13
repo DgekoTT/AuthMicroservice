@@ -25,23 +25,21 @@ export class TokenService {
 
         // @ts-ignore
          const tokenData = await this.tokenRepository.findOne({where: {userId: userId}});
-        if(tokenData) {
+         if(tokenData) {
             tokenData.refreshToken = refreshToken
             return tokenData.save();
         }
-        const newToken = await this.tokenRepository.create({userId: userId, refreshToken: refreshToken});
-        return newToken;
+         return await this.tokenRepository.create({userId: userId, refreshToken: refreshToken});
     }
 
     async removeToken(refreshToken) {
 
-        const tokenData = await this.tokenRepository.destroy({
+        return await this.tokenRepository.destroy({
             where: {
                 // @ts-ignore
                 refreshToken: `${refreshToken}`
             },
             force: true
         })
-        return tokenData;
     }
 }

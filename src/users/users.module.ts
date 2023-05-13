@@ -13,6 +13,7 @@ import {TokenModule} from "../token/token.module";
 import {Token} from "../token/token.model";
 import {AuthModule} from "../auth/auth.module";
 import {ClientsModule, Transport} from "@nestjs/microservices";
+import {MailModule} from "../mailer/mail.module";
 
 @Module({
   controllers: [UsersController],
@@ -33,6 +34,7 @@ import {ClientsModule, Transport} from "@nestjs/microservices";
       SequelizeModule.forFeature([User, Role, UserRoles, Token]),// массив моделей
       RolesModule,
       TokenModule,
+      MailModule,
       forwardRef(() => AuthModule)/* если не использовать форвард,
       то будет круговая зависимость и выдаст ошибку */
   ],

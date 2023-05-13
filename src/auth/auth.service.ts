@@ -18,9 +18,7 @@ import {ClientProxy} from "@nestjs/microservices";
 import {JwtService} from "@nestjs/jwt";
 import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
-import {UserGoogle} from "./utils/googleTypes";
-import {InjectModel} from "@nestjs/sequelize";
-import {UsersGoogle} from "./strategy/google/google.model";
+import {User} from "../users/user.model";
 
 
 @Injectable()
@@ -30,7 +28,6 @@ export class AuthService {
                 private jwtService: JwtService,
                 private tokenService: TokenService,
                 private mailService: MailService,
-                @InjectModel(UsersGoogle) private googleRepository: typeof UsersGoogle,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     async login(userDto: AuthUserDto ) {
@@ -54,7 +51,7 @@ export class AuthService {
         const user = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
 
         // оправляем ссылку активации на почту
-        await this.mailService.sendMail(user.email, tokenVerification);
+        await this.mailService.sendMailVerification(user.email, tokenVerification);
 
         // возрашает токен на основе данных пользователя
         const tokens = await this.tokenService.generateToken(user);
@@ -90,18 +87,13 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogle(info: UserGoogle): Promise<UsersGoogle> {
-        const user = await this.googleRepository.findOne({
-            where: {
-                email: info.email
-            }
-        })
+    async validateGoogle(info: { userToken: string; displayName: string; email: string }): Promise<User> {
+        const user = await this.userService.getUserByEmail(info.email)
         if(user) return user;
-
-        return  await this.googleRepository.create({...info, role: 'USER'});
+        return  await this.userService.createUser({...info, provider: `Google`});
     }
 
-    async findGoogleUser(id: number) : Promise<UsersGoogle> {
-        return await this.googleRepository.findOne({where: {id: id}})
+    async findGoogleUser(id: number) : Promise<User> {
+        return await this.userService.getUserById(id);
     }
 }
