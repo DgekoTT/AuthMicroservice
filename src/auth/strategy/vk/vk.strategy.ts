@@ -1,9 +1,10 @@
 import {Params, Profile, Strategy, VerifyCallback} from "passport-vkontakte";
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
+import {AuthService} from "../../auth.service";
 @Injectable()
 export class VkStrategy extends PassportStrategy(Strategy) {
-    constructor() {
+    constructor(private authService: AuthService) {
         super({
             clientID: '51641490',
             clientSecret: 'GKbNTcvNwoMb6ZsIssAT',
@@ -16,8 +17,7 @@ export class VkStrategy extends PassportStrategy(Strategy) {
                 profile: Profile,
                 done: VerifyCallback
             ) {
-
-            const  user = await this.authService.validateGoogleOrVk({
+            const  user = await authService.validateGoogleOrVk({
                 email: profile.emails[0].value,
                 displayName: profile.displayName,
                 userToken: accessToken,
@@ -28,13 +28,3 @@ export class VkStrategy extends PassportStrategy(Strategy) {
     }
 }
 
-//     async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
-//         console.log(profile)
-//         return done(null, {
-//             profile: {
-//                 name: profile.displayName,
-//                 email: profile.email,
-//             }
-//         // });
-//     }
-// }
