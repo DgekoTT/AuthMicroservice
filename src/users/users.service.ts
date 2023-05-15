@@ -24,7 +24,7 @@ export class UsersService {
 
     async createUser(dto: CreateUserDto) {
         let user;
-        console.log(dto)
+
         if(dto.password){
             //создаем пользователя
              user = await this.userRepository.create({...dto, provider: `mail`});

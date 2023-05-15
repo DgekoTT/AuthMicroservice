@@ -87,10 +87,10 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogle(info): Promise<User> {
+    async validateGoogleOrVk(info): Promise<User> {
         const user = await this.userService.getUserByEmail(info.email)
         if(user) return user;
-        return  await this.userService.createUser({...info, provider: `Google`});
+        return  await this.userService.createUser(info);
     }
 
     async findGoogleUser(id: number) : Promise<User> {
