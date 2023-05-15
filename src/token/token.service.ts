@@ -12,16 +12,10 @@ export class TokenService {
 
       async generateToken(user: User) {
         const payload = {email: user.email, id: user.id, roles: user.roles}
-        const accessToken = this.jwtService.sign(payload);
-        const refreshToken = this.jwtService.sign(payload);
-        return {
-            accessToken,
-            refreshToken
-        }
-
+        return  this.jwtService.sign(payload);
     }
 
-     async saveToken(userId: number, refreshToken: string) {
+     async saveToken(userId: number, refreshToken: string): Promise<Token> {
 
         // @ts-ignore
          const tokenData = await this.tokenRepository.findOne({where: {userId: userId}});
@@ -32,8 +26,7 @@ export class TokenService {
          return await this.tokenRepository.create({userId: userId, refreshToken: refreshToken});
     }
 
-    async removeToken(refreshToken) {
-
+    async removeToken(refreshToken: string) {
         return await this.tokenRepository.destroy({
             where: {
                 // @ts-ignore

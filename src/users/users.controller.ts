@@ -34,6 +34,13 @@ export class UsersController {
         return this.userService.createUser(userDto);
     }
 
+    // @UseGuards(JwtAuthGuard) //создаем проверку на авторизацию
+    @Roles("USER")
+    @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
+    @Get('/info')
+    info() {
+        return 'this.userService.getAllUser();'
+    }
     @UseGuards(JwtAuthGuard) //создаем проверку на авторизацию
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ

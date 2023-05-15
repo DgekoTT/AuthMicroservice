@@ -58,9 +58,7 @@ export class AuthController {
           @Res({ passthrough: true }) res: Response) {
         const userInfo =  await this.authService.login(userDto);
 
-        console.log(userInfo)
-
-        res.cookie('refreshToken', userInfo.refreshToken, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 
@@ -68,7 +66,7 @@ export class AuthController {
     async registration(@Body() userDto: CreateUserDto,
                  @Res({ passthrough: true }) res: Response) {
         const userInfo =  await this.authService.registration(userDto);
-        res.cookie('refreshToken', userInfo.refreshToken, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 
@@ -91,9 +89,7 @@ export class AuthController {
         const {refreshToken} = request.cookies;
         const userInfo =  await this.authService.login(userDto);
 
-        console.log(userInfo)
-
-        response.cookie('refreshToken', userInfo.refreshToken, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+        response.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 

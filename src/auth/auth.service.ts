@@ -30,14 +30,14 @@ export class AuthService {
                 private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
-    async login(userDto: AuthUserDto ) {
+    async login(userDto: AuthUserDto ): Promise<string> {
         const user = await this.validateUser(userDto);
-        const tokens =  await this.tokenService.generateToken(user);
-        await this.tokenService.saveToken(user.id, tokens.refreshToken)
-        return {...tokens};
+        const token =  await this.tokenService.generateToken(user);
+        await this.tokenService.saveToken(user.id, token)
+        return token;
     }
 
-    async registration(userDto: CreateUserDto) {
+    async registration(userDto: CreateUserDto): Promise<string>  {
         const candidate = await this.userService.getUserByEmail(userDto.email);
         if (candidate) {
             throw new HttpException(`Пользователь с таким ${userDto.email} 
@@ -54,13 +54,13 @@ export class AuthService {
         await this.mailService.sendMailVerification(user.email, tokenVerification);
 
         // возрашает токен на основе данных пользователя
-        const tokens = await this.tokenService.generateToken(user);
-        await this.tokenService.saveToken(user.id, tokens.refreshToken);
-        return {...tokens};
+        const token = await this.tokenService.generateToken(user);
+        await this.tokenService.saveToken(user.id, token);
+        return token;
     }
 
 
-    private async validateUser(userDto: AuthUserDto) {
+    private async validateUser(userDto: AuthUserDto): Promise<User>  {
         //находим пользователя по емайл
         const candidate = await this.userService.getUserByEmail(userDto.email);
         // сравниваем пароли из бд и отправленный пользователем
@@ -71,15 +71,15 @@ export class AuthService {
         throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
     }
 
-    async logout(refreshToken) {
+    async logout(refreshToken): Promise<number>  {
         return await this.tokenService.removeToken(refreshToken);
     }
 
-    private generateVerificationToken() {
+    private generateVerificationToken(): string {
         return crypto.randomBytes(20).toString('hex');
     }
 
-    async verify(token: string) {
+    async verify(token: string): Promise<any>  {
         const user = await this.userService.findByVerificationToken(token);
         if (!user) {
             throw new BadRequestException('Invalid verification token');
@@ -87,7 +87,7 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogle(info: { userToken: string; displayName: string; email: string }): Promise<User> {
+    async validateGoogle(info): Promise<User> {
         const user = await this.userService.getUserByEmail(info.email)
         if(user) return user;
         return  await this.userService.createUser({...info, provider: `Google`});

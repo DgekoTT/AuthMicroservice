@@ -24,12 +24,13 @@ export class UsersService {
 
     async createUser(dto: CreateUserDto) {
         let user;
+        console.log(dto)
         if(dto.password){
             //создаем пользователя
              user = await this.userRepository.create({...dto, provider: `mail`});
         } else {
             user = await this.makeGoogleOrVkUser(dto);
-            await this.tokenService.saveToken(user.id, dto.verificationToken)
+            await this.tokenService.saveToken(user.id, dto.userToken)
         }
         //получаем роль из базы
         const role = await this.roleService.getRoleByValue("USER") ;
@@ -93,7 +94,7 @@ export class UsersService {
     }
 
     async checkUser(id: number): Promise<any>{
-        const user = await this.userRepository.findByPk(id);
+        const user = await this.userRepository.findByPk(id, {include: {all: true}});
 
         if(!user) {
             throw new HttpException(`Пользователь с id ${id} не найден `, HttpStatus.NOT_FOUND)

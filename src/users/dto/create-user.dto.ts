@@ -18,5 +18,6 @@ export class CreateUserDto {
     verificationToken?: string
     @IsString({message: " Должно быть строкой"})
     provider?: string
-
+    @IsString({message: " Должно быть строкой"})
+    userToken?: string
 }
