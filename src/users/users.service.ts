@@ -12,6 +12,7 @@ import { randomBytes } from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
 import {use} from "passport";
+import {Token} from "../token/token.model";
 
 @Injectable()
 export class UsersService {
@@ -22,7 +23,7 @@ export class UsersService {
                 private tokenService: TokenService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
-    async createUser(dto: CreateUserDto) {
+    async createUser(dto: CreateUserDto): Promise<any> {
         let user;
 
         if(dto.password){
@@ -37,7 +38,10 @@ export class UsersService {
         //перезаписаваем значение атрибу роль у пользователя в виде ид роли
         await user.$set('roles', [role.id]);
         user.roles = [role];
-        return user;
+        // возрашает токен на основе данных пользователя
+        const token = await this.tokenService.generateToken(user);
+        await this.tokenService.saveToken(user.id, token);
+        return {user, token};
     }
 
     async getAllUser() {

@@ -35,4 +35,13 @@ export class TokenService {
             force: true
         })
     }
+
+    async findToken(id: number): Promise<string> {
+        const tokenObj = await this.tokenRepository.findOne({
+            where: {
+                // @ts-ignore
+                userId: id
+            }})
+        return tokenObj.refreshToken;
+    }
 }

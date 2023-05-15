@@ -48,14 +48,10 @@ export class AuthService {
         // создаем токен для активации по почте
         const tokenVerification = this.generateVerificationToken();
         //создаем пользователя
-        const user = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
-
+        const {user, token} = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
         // оправляем ссылку активации на почту
         await this.mailService.sendMailVerification(user.email, tokenVerification);
-
         // возрашает токен на основе данных пользователя
-        const token = await this.tokenService.generateToken(user);
-        await this.tokenService.saveToken(user.id, token);
         return token;
     }
 
@@ -87,9 +83,11 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogleOrVk(info): Promise<User> {
+    async validateGoogleOrVk(info): Promise<string> {
         const user = await this.userService.getUserByEmail(info.email)
-        if(user) return user;
+        if(user){
+            return await this.tokenService.findToken(user.id);
+        }
         return  await this.userService.createUser(info);
     }
 

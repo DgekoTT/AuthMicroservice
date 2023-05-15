@@ -30,8 +30,9 @@ export class AuthController {
 
     @Get('google/login')
     @UseGuards(GoogleGuard)
-    googleLogin() {
-        return { msg: "Google Авторизация"};
+    googleLogin(@Body() body: { accessToken: string },
+                @Res({ passthrough: true }) res: Response) {
+        return this.makeCookies(res, body.accessToken);
     }
 
     @Get('google/redirect')
@@ -85,11 +86,11 @@ export class AuthController {
     @Post('/refresh')
     async refresh(@Body() userDto: AuthUserDto,
                   @Req() request: Request,
-                  @Res({ passthrough: true }) response: Response) {
+                  @Res({ passthrough: true }) res: Response) {
         const {refreshToken} = request.cookies;
         const userInfo =  await this.authService.login(userDto);
 
-        response.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 
@@ -103,5 +104,8 @@ export class AuthController {
         }
     }
 
+    makeCookies(res, token) {
+        return  res.cookie('refreshToken', token, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+    }
 
 }
