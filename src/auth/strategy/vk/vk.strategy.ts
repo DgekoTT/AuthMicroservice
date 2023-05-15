@@ -17,14 +17,12 @@ export class VkStrategy extends PassportStrategy(Strategy) {
                 profile: Profile,
                 done: VerifyCallback
             ) {
-            const  user = await authService.validateGoogleOrVk({
+            const  token = await authService.validateGoogleOrVk({
                 email: profile.emails[0].value,
                 displayName: profile.displayName,
-                userToken: accessToken,
                 provider: 'VK'
             })
-            return done(null, user);
+            return done(null, token);
         });
     }
 }
-
