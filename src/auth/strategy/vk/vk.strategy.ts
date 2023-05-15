@@ -26,4 +26,3 @@ export class VkStrategy extends PassportStrategy(Strategy) {
         });
     }
 }
-
