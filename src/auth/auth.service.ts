@@ -2,8 +2,6 @@
 
 import {
     BadRequestException,
-    HttpException,
-    HttpStatus,
     Inject,
     Injectable,
     UnauthorizedException
@@ -38,11 +36,8 @@ export class AuthService {
     }
 
     async registration(userDto: CreateUserDto): Promise<string>  {
-        const candidate = await this.userService.getUserByEmail(userDto.email);
-        if (candidate) {
-            throw new HttpException(`Пользователь с таким ${userDto.email} 
-            уже существует`, HttpStatus.BAD_REQUEST);
-        }
+        //проверяем емал и имя
+        await this.userService.checkDto(userDto.email, userDto.displayName)
         // получаем закодированный пароль
         const hasPassword = await bcrypt.hash(userDto.password, 6);
         // создаем токен для активации по почте
@@ -94,4 +89,5 @@ export class AuthService {
     async findGoogleUser(id: number) : Promise<User> {
         return await this.userService.getUserById(id);
     }
+
 }
