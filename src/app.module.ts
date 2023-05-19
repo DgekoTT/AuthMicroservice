@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import {SequelizeModule} from "@nestjs/sequelize";
 import {User} from "./users/user.model";
 import {Role} from "./roles/roles.model";
@@ -18,11 +16,9 @@ import {RolesGuard} from "./auth/role.guard";
 import {Reflector} from "@nestjs/core";
 
 
-
-
 @Module({
-  controllers: [AppController],
-  providers: [AppService, Reflector, JwtAuthGuard, RolesGuard],
+  controllers: [],
+  providers: [ Reflector, JwtAuthGuard, RolesGuard],
   imports: [ConfigModule.forRoot({
     envFilePath: `.${process.env.NODE_ENV}.env`   /*получаем конфигурации
   для разработки и для продакшена, нужно npm i cross-env*/
