@@ -35,7 +35,7 @@ export class RolesController {
         return this.roleService. getAllRoles();
     }
 
-    @Roles("admin")
+    @Roles("USER")
     @UseGuards(RolesGuard)
     @Get('/i')
     info() {

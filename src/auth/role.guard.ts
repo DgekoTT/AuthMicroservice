@@ -4,13 +4,11 @@ import {
     HttpException,
     HttpStatus,
     Injectable,
-    UnauthorizedException
 } from "@nestjs/common";
 import {JwtService} from "@nestjs/jwt";
 import {Observable} from "rxjs";
 import {Reflector} from "@nestjs/core";
 import {ROLES_KEY} from "./roles-auth.decorator";
-import {use} from "passport";
 
 
 // для проверки авторизации пользователя и запрете доступа при ее отсутвии
@@ -29,12 +27,9 @@ export class RolesGuard implements CanActivate {
             if (!requiredRoles) {
                 return true;
             }
-            console.log(requiredRoles)
             const req = context.switchToHttp().getRequest();
             const token = req.cookies["refreshToken"];
-
             const user = this.jwtService.verify(token);
-            console.log(user)
             req.user = user;
             return user.roles.some(role => requiredRoles.includes(role.value));
         } catch (e) {
