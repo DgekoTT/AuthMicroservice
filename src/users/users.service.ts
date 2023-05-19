@@ -34,7 +34,7 @@ export class UsersService {
             await this.tokenService.saveToken(user.id, dto.userToken)
         }
         //получаем роль из базы
-        const role = await this.roleService.getRoleByValue("USER");
+        const role = await this.roleService.getRoleByValue("admin");
         //перезаписаваем значение атрибу роль у пользователя в виде ид роли
         await user.$set('roles', [role.id]);
         user.roles = [role];

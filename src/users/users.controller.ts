@@ -24,7 +24,6 @@ export class UsersController {
                 //подключаем микросервис профиля
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
     }
-    response= {}
 
     @UsePipes(ValidationPipe)
     @Roles("admin")
@@ -34,8 +33,7 @@ export class UsersController {
         return this.userService.createUser(userDto);
     }
 
-    // @UseGuards(JwtAuthGuard) //создаем проверку на авторизацию
-    @Roles("USER")
+    @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Get('/info')
     info() {
@@ -79,16 +77,14 @@ export class UsersController {
     async getUser(@Param('id') id: number): Promise<{}>{
         const profile = await firstValueFrom(this.client.send({cmd: "getProfile"}, id));
         const user = await this.userService.getUserById(id);
-        const info = makeData(profile, user)
-        return info;
+        return makeData(profile, user)
     }
 
     @Roles("admin")
     @UseGuards(RolesGuard)
     @Put('/:id')
     async updateProfile(@Body() dto: UpdateProfileDto): Promise<{}>{
-        const newProf = await firstValueFrom(this.client.send({cmd:"updateProf"}, dto))
-        return newProf;
+        return  await firstValueFrom(this.client.send({cmd:"updateProf"}, dto))
     }
 
 }

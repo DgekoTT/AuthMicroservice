@@ -43,7 +43,7 @@ import {ConfigModule} from "@nestjs/config";
       forwardRef(() => UsersModule) ,/* если не использовать форвард
       то будет круговая зависимость и выдаст ошибку */
       JwtModule.register({
-        secret: process.env.PRIVATE_KEY,
+        secret: "FFFGKJKFWMV",
           signOptions: {//время жизни токена
             expiresIn: '24h'
           }

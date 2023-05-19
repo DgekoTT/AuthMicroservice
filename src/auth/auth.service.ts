@@ -43,7 +43,7 @@ export class AuthService {
         // создаем токен для активации по почте
         const tokenVerification = this.generateVerificationToken();
         //создаем пользователя
-        const {user, token} = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
+        const [user, token] = await this.userService.createUser({...userDto, password: hasPassword, verificationToken: tokenVerification});
         // оправляем ссылку активации на почту
         await this.mailService.sendMailVerification(user.email, tokenVerification);
         // возрашает токен на основе данных пользователя

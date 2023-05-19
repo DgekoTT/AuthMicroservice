@@ -1,6 +1,6 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, Inject, Post, Query, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, Inject, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
 
 import {AuthService} from "./auth.service";
 import {Response} from "express";
@@ -14,7 +14,7 @@ import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
 import {Roles} from "./roles-auth.decorator";
 import {RolesGuard} from "./role.guard";
-import {JwtAuthGuard} from "./jwt-auth.guard";
+
 
 
 
@@ -25,11 +25,6 @@ export class AuthController {
                 private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
-    @Get('verify')
-    async verify(@Query('token') token: string) {
-        const result = await this.authService.verify(token);
-        return { message: `${result || 'Verification successful'}` };
-    }
 
     @Get('google/login')
     @UseGuards(GoogleGuard)
