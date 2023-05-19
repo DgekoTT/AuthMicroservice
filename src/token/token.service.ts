@@ -11,7 +11,7 @@ export class TokenService {
                 @InjectModel(Token) private tokenRepository: typeof Token){}
 
       async generateToken(user: User) {
-        const payload = {email: user.email, id: user.id, roles: user.roles}
+        const payload = {email: user.email, id: user.id, roles: user.roles, displayName: user.displayName}
         return  this.jwtService.sign(payload);
     }
 

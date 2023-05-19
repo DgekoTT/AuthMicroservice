@@ -15,10 +15,5 @@ RUN npm install
 COPY . .
 
 
-
-# Открываем порт, на котором будет работать приложение
-EXPOSE 4020
-
-
 # Запускаем приложение
 CMD npm run start:Auth-docker

@@ -18,9 +18,9 @@ async function microService() {
         },
     });
 
-    await app.listen()
+    await app.listen();
     console.log("MicroService Auth is listening")
 }
 
 
-microService()
+microService();
