@@ -13,13 +13,16 @@ import {Token} from "./token/token.model";
 import {ConfigModule} from "@nestjs/config";
 import {MailModule} from "./mailer/mail.module";
 import {PassportModule} from "@nestjs/passport";
+import {JwtAuthGuard} from "./auth/jwt-auth.guard";
+import {RolesGuard} from "./auth/role.guard";
+import {Reflector} from "@nestjs/core";
 
 
 
 
 @Module({
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Reflector, JwtAuthGuard, RolesGuard],
   imports: [ConfigModule.forRoot({
     envFilePath: `.${process.env.NODE_ENV}.env`   /*получаем конфигурации
   для разработки и для продакшена, нужно npm i cross-env*/
@@ -42,3 +45,4 @@ import {PassportModule} from "@nestjs/passport";
     MailModule,]
 })
 export class AppModule {}
+

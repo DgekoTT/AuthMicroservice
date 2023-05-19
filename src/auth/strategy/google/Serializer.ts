@@ -8,7 +8,7 @@ export class SessionSerializer extends PassportSerializer {
     constructor(private authService: AuthService) {
         super();
     }
-    serializeUser(user: User, done: Function): any {
+    serializeUser(user: any, done: Function): any {
         console.log('serializeUser')
         done(null, user)
     }

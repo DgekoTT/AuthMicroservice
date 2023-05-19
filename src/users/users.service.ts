@@ -41,7 +41,7 @@ export class UsersService {
         // возрашает токен на основе данных пользователя
         const token = await this.tokenService.generateToken(user);
         await this.tokenService.saveToken(user.id, token);
-        return {user, token};
+        return [user, token];
     }
 
     async getAllUser() {

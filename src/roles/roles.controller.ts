@@ -5,6 +5,7 @@ import {RolesService} from "./roles.service";
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
+import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 
 
 
@@ -32,5 +33,12 @@ export class RolesController {
     @Get()
     getAllRoles(){
         return this.roleService. getAllRoles();
+    }
+
+    @Roles("admin")
+    @UseGuards(RolesGuard)
+    @Get('/i')
+    info() {
+        return 'hi';
     }
 }

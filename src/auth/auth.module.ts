@@ -14,12 +14,19 @@ import {GoogleStrategy} from "./strategy/google/google.strategy";
 import {PassportModule} from "@nestjs/passport";
 import {SessionSerializer} from "./strategy/google/Serializer";
 import {VkStrategy} from "./strategy/vk/vk.strategy";
+import {JwtAuthGuard} from "./jwt-auth.guard";
+import {RolesGuard} from "./role.guard";
+import {ConfigModule} from "@nestjs/config";
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, VkStrategy, SessionSerializer],
-  imports: [MailModule, ClientsModule.register([
+  providers: [AuthService, GoogleStrategy, VkStrategy, SessionSerializer, JwtAuthGuard, RolesGuard],
+  imports: [ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`   /*получаем конфигурации
+  для разработки и для продакшена, нужно npm i cross-env*/
+  }),
+      MailModule, ClientsModule.register([
       {
           name: 'AUTH_SERVICE',
           transport: Transport.RMQ,
@@ -36,7 +43,7 @@ import {VkStrategy} from "./strategy/vk/vk.strategy";
       forwardRef(() => UsersModule) ,/* если не использовать форвард
       то будет круговая зависимость и выдаст ошибку */
       JwtModule.register({
-        secret: process.env.PRIVATE_KEY || "SECRET",
+        secret: process.env.PRIVATE_KEY,
           signOptions: {//время жизни токена
             expiresIn: '24h'
           }

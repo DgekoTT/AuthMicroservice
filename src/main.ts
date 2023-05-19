@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as passport from 'passport';
+const cookieParser = require('cookie-parser');
 
 async function auth() {
   const PORT = process.env.PORT || 4050;
@@ -20,6 +21,7 @@ async function auth() {
       preflightContinue: false,
       optionsSuccessStatus: 200
   });
+  app.use(cookieParser());
   app.use(passport.initialize())
   app.use(passport.session())
   await app.listen(PORT, () => console.log(`Server Auth is started on PORT = ${PORT} `))

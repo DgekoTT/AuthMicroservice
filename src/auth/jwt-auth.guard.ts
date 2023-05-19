@@ -12,19 +12,19 @@ export class JwtAuthGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
         const req = context.switchToHttp().getRequest()
         try {
-            const autHeader = req.headers.authorization;
-            const bearer = autHeader.split(' ')[0];
-            const token = autHeader.split(' ')[1];
+            console.log('aut12341e')
+            const token = req.cookies.refreshToken; // Получение токена из кукис с именем 'token'
 
-            if(bearer !== 'Bearer' || !token) {
-                throw new UnauthorizedException({message: "Пользователь не авторизован"})
+            if (!token) {
+                throw new UnauthorizedException({ message: "Пользователь не авторизован" });
             }
 
             const user = this.jwtService.verify(token);
             req.user = user;
             return true;
         } catch (e) {
-            throw new UnauthorizedException({message: "Пользователь не авторизован"})
+            throw new UnauthorizedException({ message: "Пользователь не авторизован" });
         }
+
     }
 }

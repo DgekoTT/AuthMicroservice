@@ -12,6 +12,9 @@ import {ClientProxy} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
 import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
+import {Roles} from "./roles-auth.decorator";
+import {RolesGuard} from "./role.guard";
+import {JwtAuthGuard} from "./jwt-auth.guard";
 
 
 
@@ -30,15 +33,17 @@ export class AuthController {
 
     @Get('google/login')
     @UseGuards(GoogleGuard)
-    googleLogin(@Body() body: { accessToken: string },
+    googleLogin(@Req() req: Request,
                 @Res({ passthrough: true }) res: Response) {
-        return this.makeCookies(res, body.accessToken);
     }
 
     @Get('google/redirect')
     @UseGuards(GoogleGuard)
-    googleRedirect() {
-        return { msg: "Google redirect"};
+    googleRedirect(@Req() req: Request,
+                   @Res({ passthrough: true }) res: Response) {
+        // @ts-ignore
+        res.cookie('refreshToken', req.user.dataValues.userToken.refreshToken, {httpOnly: true})
+        return
     }
 
     @Get('vkontakte/login')
@@ -49,7 +54,10 @@ export class AuthController {
 
     @Get('vkontakte/callback')
     @UseGuards(VKGuard)
-    vkRedirect() {
+    vkRedirect(@Req() req: Request,
+               @Res({ passthrough: true }) res: Response) {
+
+        res.cookie('refreshToken', req.user[1], {httpOnly: true})
         return { msg: "VK redirect"};
     }
 
@@ -87,9 +95,8 @@ export class AuthController {
     async refresh(@Body() userDto: AuthUserDto,
                   @Req() request: Request,
                   @Res({ passthrough: true }) res: Response) {
-        const {refreshToken} = request.cookies;
-        const userInfo =  await this.authService.login(userDto);
 
+        const userInfo =  await this.authService.login(userDto);
         res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
@@ -103,9 +110,11 @@ export class AuthController {
             return { msg: 'Not Authenticated' };
         }
     }
-
-    makeCookies(res, token) {
-        return  res.cookie('refreshToken', token, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+    @Roles('admin')
+    @UseGuards(RolesGuard)
+    @Get('/i')
+    getAllRoles(){
+        return "HI MAN ";
     }
 
 }
