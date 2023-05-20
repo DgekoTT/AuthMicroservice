@@ -5,7 +5,8 @@ import {RolesService} from "./roles.service";
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
-import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {ApiOperation, ApiResponse} from "@nestjs/swagger";
+import {Role} from "./roles.model";
 
 
 
@@ -14,24 +15,30 @@ export class RolesController {
     constructor(private roleService: RolesService) {
     }
 
+    @ApiOperation({summary: 'создать роль'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard)
     @Post()
-    create(@Body() dto: CreateRoleDto) {
+    create(@Body() dto: CreateRoleDto): Promise<Role> {
         return this.roleService.createRole(dto)
     }
 
+    @ApiOperation({summary: 'получить id роли по названию'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard)
     @Get('/:value')
-    getByValue(@Param('value') value: string){
+    getByValue(@Param('value') value: string): Promise<Role> {
         return this.roleService.getRoleByValue(value)
     }
 
+    @ApiOperation({summary: 'получить все роли'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: true})
     @Roles("admin")
     @UseGuards(RolesGuard)
     @Get()
-    getAllRoles(){
+    getAllRoles(): Promise<Role[]>{
         return this.roleService. getAllRoles();
     }
 

@@ -1,6 +1,6 @@
 
 
-import {Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards, UsePipes} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, Post, UseGuards, UsePipes} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {CreateUserDto} from "./dto/create-user.dto";
 import {User} from "./user.model";
@@ -10,9 +10,9 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
 import {ClientProxy} from "@nestjs/microservices";
-import {firstValueFrom} from "rxjs";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {UpdateProfileDto} from "./dto/update-profile.dto";
+import {ApiOperation, ApiResponse} from "@nestjs/swagger";
+
 
 
 
@@ -25,80 +25,60 @@ export class UsersController {
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
     }
 
+    @ApiOperation({summary: 'создание пользователя'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
     @UsePipes(ValidationPipe)
     @Roles("admin")
     @UseGuards(RolesGuard)
     @Post()
-    create(@Body() userDto: CreateUserDto) {
+    create(@Body() userDto: CreateUserDto): Promise<[User, string]> {
         return this.userService.createUser(userDto);
     }
 
-    @Roles("admin")
-    @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
-    @Get('/info')
-    info() {
-        return 'this.userService.getAllUser();'
-    }
+    @ApiOperation({summary: 'получение всех пользователей из бд'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: true})
     @UseGuards(JwtAuthGuard) //создаем проверку на авторизацию
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Get()
-    getAllUsers() {
+    getAllUsers() : Promise<User[]> {
         return this.userService.getAllUser();
     }
 
+    @ApiOperation({summary: 'создание новой роли'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Roles, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Post('/role')
-    addRole(@Body() dto: AddRoleDto) {
+    addRole(@Body() dto: AddRoleDto): Promise<AddRoleDto>  {
         return this.userService.addRole(dto);
     }
 
+    @ApiOperation({summary: 'бан пользователя'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: BanUserDto, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Post('/ban')
-    ban(@Body() dto: BanUserDto) {
+    ban(@Body() dto: BanUserDto): Promise<User> {
         return this.userService.ban(dto);
     }
 
+    @ApiOperation({summary: 'удаление пользователя'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: true})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Delete('del:id')
-    async delUser(@Param('id') id: number): Promise<[string, {}]>{
-        const profileDeleted  =   await firstValueFrom( this.client.send({cmd:"delProfile"}, id))
-        const userDel = await this.userService.delUser(id);
-        const info = makeData(profileDeleted, userDel[0])
-        return [userDel[1], info];
+    async delUser(@Param('id') id: number): Promise<[User, string]> {
+        return await this.userService.delUser(id);
     }
 
+    @ApiOperation({summary: 'получение пользователя по id'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
     @Get('/:id')
-    async getUser(@Param('id') id: number): Promise<{}>{
-        const profile = await firstValueFrom(this.client.send({cmd: "getProfile"}, id));
-        const user = await this.userService.getUserById(id);
-        return makeData(profile, user)
+    async getUser(@Param('id') id: number): Promise<User> {
+        return await this.userService.getUserById(id);
     }
 
-    @Roles("admin")
-    @UseGuards(RolesGuard)
-    @Put('/:id')
-    async updateProfile(@Body() dto: UpdateProfileDto): Promise<{}>{
-        return  await firstValueFrom(this.client.send({cmd:"updateProf"}, dto))
-    }
-
-}
-
-function makeData(profileDeleted: any, userDel: User) {
-    return {"id": userDel.id,
-        "email": userDel.email,
-        "banned": userDel.banned,
-        "banReason": userDel.banReason,
-        "fullName": profileDeleted.fullName,
-        "phone": profileDeleted.phone,
-        "age": profileDeleted.age,
-        "city": profileDeleted.city,
-        "createdAt": userDel.createdAt,
-        "updatedAt": userDel.updatedAt
-    }
 }

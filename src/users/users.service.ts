@@ -109,7 +109,6 @@ export class UsersService {
 
     async getUserById(id: number): Promise<User> {
         return await this.checkUser(id);
-
     }
 
     async findByVerificationToken(token: string) {
@@ -118,7 +117,6 @@ export class UsersService {
                 verificationToken: token
             }
         });
-
     }
 
     async updateVerificationStatus(user: User): Promise<any> {
