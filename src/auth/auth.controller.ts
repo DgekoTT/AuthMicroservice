@@ -1,7 +1,6 @@
 //nest generate controller auth создано командой
 
 import {Body, Controller, Get, Inject, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
-
 import {AuthService} from "./auth.service";
 import {Response} from "express";
 import {Request} from  "express";
@@ -14,10 +13,12 @@ import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
 import {Roles} from "./roles-auth.decorator";
 import {RolesGuard} from "./role.guard";
+import {ApiBody, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import Cookies from "nodemailer/lib/fetch/cookies";
 
 
 
-
+@ApiTags("контроллер авторизации")
 @Controller('/auth')
 export class AuthController {
 
@@ -25,7 +26,8 @@ export class AuthController {
                 private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
-
+    @ApiOperation({summary: 'логин при помощи гугла'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('google/login')
     @UseGuards(GoogleGuard)
     googleLogin(@Req() req: Request,
@@ -41,6 +43,8 @@ export class AuthController {
         return
     }
 
+    @ApiOperation({summary: 'логин при помощи VK'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('vkontakte/login')
     @UseGuards(VKGuard)
     vkLogin() {
@@ -56,40 +60,46 @@ export class AuthController {
         return { msg: "VK redirect"};
     }
 
+    @ApiOperation({summary: 'логин при помощи email'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @UsePipes(ValidationPipe)
     @Post('/login')
     async login(@Body() userDto: AuthUserDto,
-          @Res({ passthrough: true }) res: Response) {
+          @Res({ passthrough: true }) res: Response): Promise<string>  {
         const userInfo =  await this.authService.login(userDto);
 
         res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 
+    @ApiOperation({summary: 'регистрация пользователя'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Post("/registration")
     async registration(@Body() userDto: CreateUserDto,
-                 @Res({ passthrough: true }) res: Response) {
+                 @Res({ passthrough: true }) res: Response): Promise<string> {
         const userInfo =  await this.authService.registration(userDto);
         res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
     }
 
+    @ApiOperation({summary: 'выход из аккаунта'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Post('/logout')
     logout( @Req() request: Request,
-        @Res({ passthrough: true }) response: Response) {
+        @Res({ passthrough: true }) response: Response) : Promise<number>   {
         const {refreshToken} = request.cookies;
-        console.log(request)
         const token = this.authService.logout(refreshToken);
         response.clearCookie('refreshToken');
         return token;
-
     }
 
+    @ApiOperation({summary: 'обновление кукис с токеном'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @UsePipes(ValidationPipe)
     @Post('/refresh')
     async refresh(@Body() userDto: AuthUserDto,
                   @Req() request: Request,
-                  @Res({ passthrough: true }) res: Response) {
+                  @Res({ passthrough: true }) res: Response) : Promise<string>   {
 
         const userInfo =  await this.authService.login(userDto);
         res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
@@ -104,12 +114,6 @@ export class AuthController {
         } else {
             return { msg: 'Not Authenticated' };
         }
-    }
-    @Roles('admin')
-    @UseGuards(RolesGuard)
-    @Get('/i')
-    getAllRoles(){
-        return "HI MAN ";
     }
 
 }

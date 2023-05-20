@@ -11,7 +11,7 @@ export class CreateUserDto {
     readonly email: string;
     @IsString({message: " Должно быть строкой"})
     @Length(8, 16, {message: "Пароль от 8 до 16 симолов"})
-    readonly password?: string;
+    readonly password: string;
     @IsString({message: " Должно быть строкой"})
     readonly displayName: string;
     @IsString({message: " Должно быть строкой"})

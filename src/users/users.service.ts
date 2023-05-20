@@ -139,12 +139,18 @@ export class UsersService {
         return await this.userRepository.create({...dto, password: password, verificationStatus: true})
     }
 
-    async checkDto(email: string, displayName: string) {
+    async checkDto(email: string, displayName: string, password: string) {
         const {rows, count} = await this.userRepository.findAndCountAll({
             where: {
                 [Op.or]: [{email}, {displayName}]
             }
         })
+        this.showProblem(rows, count, password, email)
+        }
+
+
+    private showProblem(rows: User[], count: number, password: string, email: string) {
+        if(!password) throw new HttpException(`Укажите пароль от 8 до 16 символов`, HttpStatus.BAD_REQUEST);
         if (count > 0) {
             if (rows[0].email === email) {
                 throw new HttpException(`Пользователь с таким ${rows[0].email} уже существует`, HttpStatus.BAD_REQUEST);
