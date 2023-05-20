@@ -12,6 +12,7 @@ import { randomBytes } from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
 import {Op} from "sequelize";
+import {CreateUserVkGoogleDto} from "./dto/create-VkUserGoogle.dto";
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
     }
 
-    async createUser(dto: CreateUserDto): Promise<any> {
+    async createUser(dto: CreateUserDto | CreateUserVkGoogleDto): Promise<[User, string]> {
         let user;
 
         if (dto.password) {
@@ -133,7 +134,7 @@ export class UsersService {
 
     }
 
-    private async makeGoogleOrVkUser(dto: CreateUserDto): Promise<User> {
+    private async makeGoogleOrVkUser(dto: CreateUserVkGoogleDto): Promise<User> {
         const password = randomBytes(14).toString('hex');
         this.mailService.sendMailPass(dto.email, password)
         return await this.userRepository.create({...dto, password: password, verificationStatus: true})
@@ -153,7 +154,7 @@ export class UsersService {
         if(!password) throw new HttpException(`Укажите пароль от 8 до 16 символов`, HttpStatus.BAD_REQUEST);
         if (count > 0) {
             if (rows[0].email === email) {
-                throw new HttpException(`Пользователь с таким ${rows[0].email} уже существует`, HttpStatus.BAD_REQUEST);
+                throw new HttpException(`Пользователь с таким ${rows[0].email} уже существует`, HttpStatus.BAD_REQUEST,);
             } else {
                 throw new HttpException(`Пользователь с таким ${rows[0].displayName} уже существует`, HttpStatus.BAD_REQUEST);
             }

@@ -11,9 +11,7 @@ import {ClientProxy} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
 import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
-import {Roles} from "./roles-auth.decorator";
-import {RolesGuard} from "./role.guard";
-import {ApiBody, ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
 
 
@@ -74,6 +72,7 @@ export class AuthController {
 
     @ApiOperation({summary: 'регистрация пользователя'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
+    @UsePipes(ValidationPipe)
     @Post("/registration")
     async registration(@Body() userDto: CreateUserDto,
                  @Res({ passthrough: true }) res: Response): Promise<string> {
