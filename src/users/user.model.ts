@@ -50,11 +50,11 @@ export class User extends Model<User, USerCreationAttrs> {
     /*создаем связь многий ко многим между пользователями и ролями
     содениние FK будет в таблице UserRoles
      */
-    @ApiProperty({example: 1, description: 'FK из таблицы UserRoles,', isArray: true})
+    @ApiProperty({example: [1, 2], description: 'FK из таблицы UserRoles,', isArray: true})
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
 
-    @ApiProperty({example: 1, description: 'id ключа из таблицы токенов'})
+    @ApiProperty({example: Token, description: 'объект Jwt token'})
     @HasOne(() => Token)
     userToken: Token;
 

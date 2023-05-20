@@ -29,7 +29,7 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     /*создаем связь многий ко многим между пользователями и ролями
     содениние FK будет в таблице UserRoles
      */
-    @ApiProperty({example: 1, description: 'FK из таблицы UserRoles,', isArray: true})
+    @ApiProperty({example: [1, 3, 7], description: 'FK из таблицы UserRoles,', isArray: true})
     @BelongsToMany(() => User, () => UserRoles)
     users: User[];
 }
