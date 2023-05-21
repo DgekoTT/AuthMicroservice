@@ -5,7 +5,7 @@ import {RolesService} from "./roles.service";
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
-import {ApiOperation, ApiResponse} from "@nestjs/swagger";
+import {ApiCookieAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 import {Role} from "./roles.model";
 
 
@@ -15,6 +15,7 @@ export class RolesController {
     constructor(private roleService: RolesService) {
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'создать роль'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: false})
     @Roles("admin")
@@ -24,6 +25,7 @@ export class RolesController {
         return this.roleService.createRole(dto)
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'получить id роли по названию'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: false})
     @Roles("admin")
@@ -33,6 +35,7 @@ export class RolesController {
         return this.roleService.getRoleByValue(value)
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'получить все роли'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Role, isArray: true})
     @Roles("admin")

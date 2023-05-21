@@ -11,7 +11,7 @@ import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
 import {ClientProxy} from "@nestjs/microservices";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {ApiOperation, ApiResponse} from "@nestjs/swagger";
+import {ApiCookieAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 
 
 
@@ -25,16 +25,16 @@ export class UsersController {
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
     }
 
+
     @ApiOperation({summary: 'создание пользователя'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
     @UsePipes(ValidationPipe)
-    @Roles("admin")
-    @UseGuards(RolesGuard)
     @Post()
     create(@Body() userDto: CreateUserDto): Promise<[User, string]> {
         return this.userService.createUser(userDto);
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'получение всех пользователей из бд'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: true})
     @UseGuards(JwtAuthGuard) //создаем проверку на авторизацию
@@ -45,6 +45,7 @@ export class UsersController {
         return this.userService.getAllUser();
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'создание новой роли'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Roles, isArray: false})
     @Roles("admin")
@@ -54,6 +55,7 @@ export class UsersController {
         return this.userService.addRole(dto);
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'бан пользователя'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: BanUserDto, isArray: false})
     @Roles("admin")
@@ -63,6 +65,7 @@ export class UsersController {
         return this.userService.ban(dto);
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'удаление пользователя'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: true})
     @Roles("admin")
@@ -72,6 +75,7 @@ export class UsersController {
         return await this.userService.delUser(id);
     }
 
+    @ApiCookieAuth()
     @ApiOperation({summary: 'получение пользователя по id'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
     @Roles("admin")
