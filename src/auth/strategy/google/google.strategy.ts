@@ -21,12 +21,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
             scope: ['profile', 'email'],
         });
     }
-    async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
-        const  user = await this.authService.validateGoogleOrVk({
+    async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifyCallback): Promise<any> {
+        const token = await this.authService.validateGoogleOrVk({
             email: profile.emails[0].value,
             displayName: profile.displayName,
             provider: 'Google'
         })
-        return user;
+        return done(null, token);
     }
 }

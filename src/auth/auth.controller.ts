@@ -36,9 +36,9 @@ export class AuthController {
     @UseGuards(GoogleGuard)
     googleRedirect(@Req() req: Request,
                    @Res({ passthrough: true }) res: Response) {
-        // @ts-ignore
-        res.cookie('refreshToken', req.user.dataValues.userToken.refreshToken, {httpOnly: true})
-        return
+
+        res.cookie('refreshToken', req.user[1], {httpOnly: true})
+        return { msg: "Google redirect"}
     }
 
     @ApiOperation({summary: 'логин при помощи VK'})

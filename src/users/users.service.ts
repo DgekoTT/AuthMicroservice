@@ -32,7 +32,6 @@ export class UsersService {
             user = await this.userRepository.create({...dto, provider: `mail`});
         } else {
             user = await this.makeGoogleOrVkUser(dto);
-            await this.tokenService.saveToken(user.id, dto.userToken)
         }
         //получаем роль из базы
         const role = await this.roleService.getRoleByValue("admin");
