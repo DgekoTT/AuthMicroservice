@@ -120,7 +120,7 @@ export class UsersService {
 
     async updateVerificationStatus(user: User): Promise<any> {
         try {
-            const result = await user.update({verificationStatus: true}, {
+             await user.update({verificationStatus: true}, {
                 where: {
                     id: user.id
                 }
