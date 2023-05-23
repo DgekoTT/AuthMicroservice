@@ -49,12 +49,14 @@ export class UsersService {
         return await this.userRepository.findAll({include: {all: true}});
     }
 
-    async getUserByEmail(email: string): Promise<string> {
+    async checkEmail(email: string): Promise<string> {
         const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
         return (user) ? `Пользователь с таким ${user.email} уже существует` : email
 
     }
-
+    async getUserByEmail(email: string): Promise<User> {
+        return  await this.userRepository.findOne({where: {email}, include: {all: true}})
+    }
     async getUserByName(name: string): Promise<string> {
         const user = await this.userRepository.findOne({where: {displayName: name}})
         return (user) ? `Пользователь с таким ${user.displayName} уже существует` : user.displayName

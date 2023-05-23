@@ -123,7 +123,7 @@ export class AuthController {
     @UsePipes(ValidationPipe)
     @Post('/mail')
     async checkMail(@Body() email: string) {
-        return this.userService.getUserByEmail(email)
+        return this.userService.checkEmail(email)
     }
 
     @ApiOperation({summary: 'проверка по имени'})
