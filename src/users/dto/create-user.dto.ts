@@ -20,17 +20,17 @@ export class CreateUserDto {
     @IsString({message: " Должно быть строкой"})
     readonly displayName: string;
 
-    @ApiProperty({example: '2dsfd24fasf', description: 'токен который использовался для подтверждения почты'})
+    @ApiProperty({example: '2dsfd24fasf', description: 'токен который использовался для подтверждения почты', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     verificationToken?: string
 
-    @ApiProperty({example: 'email', description: 'как был зарегистрирован пользователь'})
+    @ApiProperty({example: 'email', description: 'как был зарегистрирован пользователь', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     provider?: string
 
-    @ApiProperty({example: '2dsfd24fasf', description: 'как быз зарегистрирован пользователь'})
+    @ApiProperty({example: '2dsfd24fasf', description: 'как быз зарегистрирован пользователь', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     userToken?: string
