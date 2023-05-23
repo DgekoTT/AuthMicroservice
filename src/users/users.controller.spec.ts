@@ -14,8 +14,7 @@ describe('MyController', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [UsersController],
-            providers: [UsersService,
-                {provide: UsersService}],
+            providers: [UsersService,],
         }).compile();
 
         controller = module.get<UsersController>(UsersController);
@@ -29,7 +28,7 @@ describe('MyController', () => {
             // @ts-ignore
             jest.spyOn(service, 'getAllUser').mockResolvedValue(User[obj] || Promise );
 
-            const response = await controller.getAll();
+            const response = await controller.getAllUser();
 
             expect(response).toEqual({ message: 'success' });
         });

@@ -24,6 +24,17 @@ export class AuthController {
                 private mailService: MailService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
+    @ApiOperation({summary: 'регистрация admin'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
+    @UsePipes(ValidationPipe)
+    @Post("/admin")
+    async admin(@Body() userDto: CreateUserDto,
+                       @Res({ passthrough: true }) res: Response): Promise<string> {
+        const userInfo =  await this.authService.registrationAdmin(userDto);
+        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
+        return userInfo;
+    }
+
     @ApiOperation({summary: 'логин при помощи гугла'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('google/login')

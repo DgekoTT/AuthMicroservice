@@ -90,4 +90,18 @@ export class AuthService {
         return await this.userService.getUserById(id);
     }
 
+    async registrationAdmin(userDto: CreateUserDto) {
+        //проверяем емал и имя
+        await this.userService.checkDto(userDto.email, userDto.displayName, userDto.password)
+        // получаем закодированный пароль
+        const hasPassword = await bcrypt.hash(userDto.password, 6);
+        // создаем токен для активации по почте
+        const tokenVerification = this.generateVerificationToken();
+        //создаем пользователя
+        const [user, token] = await this.userService.createUserAdmin({...userDto, password: hasPassword, verificationToken: tokenVerification});
+        // оправляем ссылку активации на почту
+        await this.mailService.sendMailVerification(user.email, tokenVerification);
+        // возрашает токен на основе данных пользователя
+        return token;
+    }
 }

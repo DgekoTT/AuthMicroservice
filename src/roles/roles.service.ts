@@ -22,4 +22,9 @@ export class RolesService {
     async getAllRoles(): Promise<Role[]> {
         return  await this.roleRepository.findAll();
     }
+
+    async createRoles(): Promise<Role[]> {
+        const roles = [{value: 'admin', description: 'main role, boss'}, {value: 'user', description: 'only user'}]
+        return  await this.roleRepository.bulkCreate(roles)
+    }
 }

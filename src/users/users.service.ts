@@ -34,7 +34,7 @@ export class UsersService {
             user = await this.makeGoogleOrVkUser(dto);
         }
         //получаем роль из базы
-        const role = await this.roleService.getRoleByValue("admin");
+        const role = await this.roleService.getRoleByValue("user");
         //перезаписаваем значение атрибу роль у пользователя в виде ид роли
         await user.$set('roles', [role.id]);
         user.roles = [role];
@@ -156,5 +156,25 @@ export class UsersService {
                 throw new HttpException(`Пользователь с таким ${rows[0].displayName} уже существует`, HttpStatus.BAD_REQUEST);
             }
         }
+    }
+
+    async createUserAdmin(dto: CreateUserDto) {
+        let user;
+        if (dto.password) {
+            //создаем пользователя
+            user = await this.userRepository.create({...dto, provider: `mail`});
+        } else {
+            user = await this.makeGoogleOrVkUser(dto);
+        }
+        await this.roleService.createRoles()
+        //получаем роль из базы
+        const role = await this.roleService.getRoleByValue("admin");
+        //перезаписаваем значение атрибу роль у пользователя в виде ид роли
+        await user.$set('roles', [role.id]);
+        user.roles = [role];
+        // возрашает токен на основе данных пользователя
+        const token = await this.tokenService.generateToken(user);
+        await this.tokenService.saveToken(user.id, token);
+        return [user, token];
     }
 }
