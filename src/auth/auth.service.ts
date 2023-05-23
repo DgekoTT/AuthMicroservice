@@ -36,8 +36,6 @@ export class AuthService {
     }
 
     async registration(userDto: CreateUserDto): Promise<string>  {
-        //проверяем емал и имя
-        await this.userService.checkDto(userDto.email, userDto.displayName, userDto.password)
         // получаем закодированный пароль
         const hasPassword = await bcrypt.hash(userDto.password, 6);
         // создаем токен для активации по почте
@@ -91,8 +89,6 @@ export class AuthService {
     }
 
     async registrationAdmin(userDto: CreateUserDto) {
-        //проверяем емал и имя
-        await this.userService.checkDto(userDto.email, userDto.displayName, userDto.password)
         // получаем закодированный пароль
         const hasPassword = await bcrypt.hash(userDto.password, 6);
         // создаем токен для активации по почте

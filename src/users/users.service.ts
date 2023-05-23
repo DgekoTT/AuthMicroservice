@@ -13,6 +13,7 @@ import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
 import {Op} from "sequelize";
 import {CreateUserVkGoogleDto} from "./dto/create-VkUserGoogle.dto";
+import {use} from "passport";
 
 @Injectable()
 export class UsersService {
@@ -48,8 +49,16 @@ export class UsersService {
         return await this.userRepository.findAll({include: {all: true}});
     }
 
-    async getUserByEmail(email: string) {
-        return await this.userRepository.findOne({where: {email}, include: {all: true}})
+    async getUserByEmail(email: string): Promise<string> {
+        const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
+        return (user) ? `Пользователь с таким ${user.email} уже существует` : email
+
+    }
+
+    async getUserByName(name: string): Promise<string> {
+        const user = await this.userRepository.findOne({where: {displayName: name}})
+        return (user) ? `Пользователь с таким ${user.displayName} уже существует` : user.displayName
+
     }
 
     async addRole(dto: AddRoleDto) {
@@ -137,26 +146,8 @@ export class UsersService {
         return await this.userRepository.create({...dto, password: password, verificationStatus: true})
     }
 
-    async checkDto(email: string, displayName: string, password: string) {
-        const {rows, count} = await this.userRepository.findAndCountAll({
-            where: {
-                [Op.or]: [{email}, {displayName}]
-            }
-        })
-        this.showProblem(rows, count, password, email)
-        }
 
 
-    private showProblem(rows: User[], count: number, password: string, email: string) {
-        if(!password) throw new HttpException(`Укажите пароль от 8 до 16 символов`, HttpStatus.BAD_REQUEST);
-        if (count > 0) {
-            if (rows[0].email === email) {
-                throw new HttpException(`Пользователь с таким ${rows[0].email} уже существует`, HttpStatus.BAD_REQUEST,);
-            } else {
-                throw new HttpException(`Пользователь с таким ${rows[0].displayName} уже существует`, HttpStatus.BAD_REQUEST);
-            }
-        }
-    }
 
     async createUserAdmin(dto: CreateUserDto) {
         let user;

@@ -13,6 +13,7 @@ import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
+import {UsersService} from "../users/users.service";
 
 
 
@@ -22,6 +23,7 @@ export class AuthController {
 
     constructor(private authService: AuthService,
                 private mailService: MailService,
+                private userService: UsersService,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     @ApiOperation({summary: 'регистрация admin'})
@@ -116,6 +118,23 @@ export class AuthController {
         return userInfo;
     }
 
+    @ApiOperation({summary: 'проверка емайл'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
+    @UsePipes(ValidationPipe)
+    @Post('/mail')
+    async checkMail(@Body() email: string) {
+        return this.userService.getUserByEmail(email)
+    }
+
+    @ApiOperation({summary: 'проверка по имени'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
+    @UsePipes(ValidationPipe)
+    @Post('/name')
+    async checkName(@Body() name: string) {
+        return this.userService.getUserByName(name)
+    }
+
+
     @Get('status')
     user(@Req() request: Request) {
         console.log(request.user);
@@ -125,5 +144,7 @@ export class AuthController {
             return { msg: 'Not Authenticated' };
         }
     }
+
+
 
 }
