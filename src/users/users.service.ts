@@ -11,9 +11,7 @@ import {ClientProxy} from "@nestjs/microservices";
 import { randomBytes } from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
-import {Op} from "sequelize";
 import {CreateUserVkGoogleDto} from "./dto/create-VkUserGoogle.dto";
-import {use} from "passport";
 
 @Injectable()
 export class UsersService {
