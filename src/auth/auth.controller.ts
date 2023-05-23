@@ -127,7 +127,7 @@ export class AuthController {
     }
 
     @ApiOperation({summary: 'проверка по имени'})
-    @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false} )
     @UsePipes(ValidationPipe)
     @Post('/name')
     async checkName(@Body() name: string) {
