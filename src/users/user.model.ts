@@ -54,7 +54,7 @@ export class User extends Model<User, USerCreationAttrs> {
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
 
-    @ApiProperty({example: 'fwfwvbwt3', description: 'объект Jwt token'})
+    @ApiProperty({example: {}, description: 'объект Jwt token'})
     @HasOne(() => Token)
     userToken: Token;
 
