@@ -15,6 +15,7 @@ async function auth() {
           saveUninitialized: false,
           cookie: {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true}
       }))
+
   app.enableCors({
       origin: "*",
       credentials: true,// отвечает за куки
@@ -22,6 +23,7 @@ async function auth() {
       preflightContinue: false,
       optionsSuccessStatus: 200
   });
+
   const config = new DocumentBuilder()
         .setTitle('Авторизация')
         .setDescription('Описание  API авторизации')
@@ -29,9 +31,11 @@ async function auth() {
         .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/docs', app, document);
+
   app.use(cookieParser());
   app.use(passport.initialize())
   app.use(passport.session())
+
   await app.listen(PORT, () => console.log(`Server Auth is started on PORT = ${PORT} `))
 }
 

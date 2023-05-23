@@ -54,7 +54,7 @@ export class User extends Model<User, USerCreationAttrs> {
     @BelongsToMany(() => Role, () => UserRoles)
     roles: Role[];
 
-    @ApiProperty({example: Token, description: 'объект Jwt token'})
+    @ApiProperty({example: 'fwfwvbwt3', description: 'объект Jwt token'})
     @HasOne(() => Token)
     userToken: Token;
 
@@ -62,7 +62,7 @@ export class User extends Model<User, USerCreationAttrs> {
     @Column({type: DataType.BOOLEAN})
     verificationStatus: boolean;
 
-    @ApiProperty({example: 'dsd24f5gsgsgs', description: 'токен для подтверждения почты'})
+    @ApiProperty({example: 'dsd24f5gsgs1r35ggs', description: 'токен для подтверждения почты'})
     @Column({type: DataType.STRING})
     verificationToken: string
 
