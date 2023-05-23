@@ -12,7 +12,7 @@ export class CreateUserVkGoogleDto {
     @IsEmail({},{message: 'Некорректный емайл'})
     readonly email: string;
 
-    @ApiProperty({example: 'd3F35@34f$', description: 'пароль'})
+    @ApiProperty({example: 'd3F35@34f$', description: 'пароль', required: false})
     @IsString({message: " Должно быть строкой"})
     @Length(8, 16, {message: "Пароль от 8 до 16 симолов"})
     @IsOptional()
@@ -22,17 +22,17 @@ export class CreateUserVkGoogleDto {
     @IsString({message: " Должно быть строкой"})
     readonly displayName: string;
 
-    @ApiProperty({example: 'true', description: 'подтвердил ли почту пользователь'})
+    @ApiProperty({example: 'true', description: 'подтвердил ли почту пользователь', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     verificationToken?: string
 
-    @ApiProperty({example: 'email', description: 'как был зарегистрирован пользователь'})
+    @ApiProperty({example: 'email', description: 'как был зарегистрирован пользователь', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     provider?: string
 
-    @ApiProperty({example: Token, description: 'объект Jwt token'})
+    @ApiProperty({example: Token, description: 'объект Jwt token', required: false})
     @IsString({message: " Должно быть строкой"})
     @IsOptional()
     userToken?: string
