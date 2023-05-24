@@ -14,6 +14,8 @@ import {VKGuard} from "./strategy/vk/vk.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
 import {UsersService} from "../users/users.service";
+import {CheckMailDto} from "./dto/check-mail.dto";
+import {CheckNameDto} from "./dto/check-name.dto";
 
 
 
@@ -122,7 +124,8 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
     @UsePipes(ValidationPipe)
     @Post('/mail')
-    async checkMail(@Body() email: string) {
+    async checkMail(@Body() email: CheckMailDto) {
+        console.log(email)
         return this.userService.checkEmail(email)
     }
 
@@ -130,7 +133,7 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false} )
     @UsePipes(ValidationPipe)
     @Post('/name')
-    async checkName(@Body() name: string) {
+    async checkName(@Body() name: CheckNameDto) {
         return this.userService.getUserByName(name)
     }
 

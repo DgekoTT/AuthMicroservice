@@ -12,6 +12,9 @@ import { randomBytes } from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
 import {CreateUserVkGoogleDto} from "./dto/create-VkUserGoogle.dto";
+import {CheckNameDto} from "../auth/dto/check-name.dto";
+import {CheckMailDto} from "../auth/dto/check-mail.dto";
+
 
 @Injectable()
 export class UsersService {
@@ -47,18 +50,18 @@ export class UsersService {
         return await this.userRepository.findAll({include: {all: true}});
     }
 
-    async checkEmail(email: string): Promise<string> {
-        const user = await this.userRepository.findOne({where: {email}, include: {all: true}})
+    async checkEmail(email: CheckMailDto): Promise<string | CheckMailDto> {
+        const user = await this.userRepository.findOne({where: { email: email.mail }})
         return (user) ? `Пользователь с таким ${user.email} уже существует` : email
-
     }
     async getUserByEmail(email: string): Promise<User> {
-        return  await this.userRepository.findOne({where: {email}, include: {all: true}})
+        return  await this.userRepository.findOne({where: {email: email}, include: {all: true}})
     }
-    async getUserByName(name: string): Promise<string> {
-        const user = await this.userRepository.findOne({where: {displayName: name}})
-        return (user) ? `Пользователь с таким ${user.displayName} уже существует` : user.displayName
 
+    async getUserByName(name: CheckNameDto): Promise<string> {
+
+        const user = await this.userRepository.findOne( {where: { displayName: name.displayName}})
+        return (user) ? `Пользователь с таким ${user.displayName} уже существует` : user.displayName
     }
 
     async addRole(dto: AddRoleDto) {
