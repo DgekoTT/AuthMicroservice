@@ -12,8 +12,7 @@ import { randomBytes } from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {TokenService} from "../token/token.service";
 import {CreateUserVkGoogleDto} from "./dto/create-VkUserGoogle.dto";
-import {CheckNameDto} from "../auth/dto/check-name.dto";
-import {CheckMailDto} from "../auth/dto/check-mail.dto";
+
 
 
 @Injectable()
