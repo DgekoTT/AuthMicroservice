@@ -123,7 +123,7 @@ export class AuthController {
     @ApiOperation({summary: 'проверка емайл'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
     @UsePipes(ValidationPipe)
-    @Post('/mail')
+    @Post('/email')
     async checkMail(@Body() email: CheckMailDto) {
         console.log(email)
         return this.userService.checkEmail(email.email)
