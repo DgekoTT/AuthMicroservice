@@ -126,7 +126,7 @@ export class AuthController {
     @Post('/mail')
     async checkMail(@Body() email: CheckMailDto) {
         console.log(email)
-        return this.userService.checkEmail(email)
+        return this.userService.checkEmail(email.email)
     }
 
     @ApiOperation({summary: 'проверка по имени'})
@@ -134,7 +134,7 @@ export class AuthController {
     @UsePipes(ValidationPipe)
     @Post('/name')
     async checkName(@Body() name: CheckNameDto) {
-        return this.userService.getUserByName(name)
+        return this.userService.getUserByName(name.displayName)
     }
 
 

@@ -5,5 +5,5 @@ export class CheckMailDto {
     @ApiProperty({example: 'user@gmail.com', description: 'почта'})
     @IsString({message: " Должно быть строкой"})
     @IsEmail({},{message: 'Некорректный емайл'})
-    readonly mail: string
+    readonly email: string
 }
