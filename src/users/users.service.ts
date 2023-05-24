@@ -59,9 +59,8 @@ export class UsersService {
     }
 
     async getUserByName(displayName: string): Promise<string> {
-
         const user = await this.userRepository.findOne( {where: { displayName: displayName}})
-        return (user) ? `Пользователь с таким ${user.displayName} уже существует` : user.displayName
+         return (user) ? `Пользователь с таким ${user.displayName} уже существует` : displayName
     }
 
     async addRole(dto: AddRoleDto) {
