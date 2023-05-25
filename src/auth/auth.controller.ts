@@ -52,8 +52,7 @@ export class AuthController {
     googleRedirect(@Req() req: Request,
                    @Res({ passthrough: true }) res: Response) {
 
-        res.cookie('refreshToken', req.user[1], {httpOnly: true})
-        return { msg: "Google redirect"}
+        res.status(HttpStatus.OK).cookie('refreshToken', req.user[1], {httpOnly: true})
     }
 
     @ApiOperation({summary: 'логин при помощи VK'})
@@ -69,8 +68,7 @@ export class AuthController {
     vkRedirect(@Req() req: Request,
                @Res({ passthrough: true }) res: Response) {
 
-        res.cookie('refreshToken', req.user[1], {httpOnly: true})
-        return { msg: "VK redirect"};
+        res.status(HttpStatus.OK).cookie('refreshToken', req.user[1], {httpOnly: true})
     }
 
     @ApiOperation({summary: 'логин при помощи email'})
@@ -97,11 +95,10 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Post('/logout')
     logout( @Req() request: Request,
-        @Res({ passthrough: true }) response: Response) : Promise<number>   {
+        @Res({ passthrough: true }) response: Response): void  {
         const {refreshToken} = request.cookies;
         const token = this.authService.logout(refreshToken);
-        response.clearCookie('refreshToken');
-        return token;
+        response.clearCookie('refreshToken').status(HttpStatus.OK);
     }
 
     @ApiOperation({summary: 'обновление кукис с токеном'})
