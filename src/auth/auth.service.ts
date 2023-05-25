@@ -78,7 +78,7 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogleOrVk(info): Promise<any> {
+    async validateGoogleOrVk(info): Promise<[User, string]>  {
         const user = await this.userService.getUserByEmail(info.email)
         if(user){
             return [user, await this.tokenService.findToken(user.id)];
