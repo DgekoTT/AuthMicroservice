@@ -1,6 +1,6 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, Inject, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, HttpStatus, Inject, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
 import {AuthService} from "./auth.service";
 import {Response} from "express";
 import {Request} from  "express";
@@ -78,11 +78,9 @@ export class AuthController {
     @UsePipes(ValidationPipe)
     @Post('/login')
     async login(@Body() userDto: AuthUserDto,
-          @Res({ passthrough: true }) res: Response): Promise<string>  {
-        const userInfo =  await this.authService.login(userDto);
-
-        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
-        return userInfo;
+          @Res({ passthrough: true }) res: Response): Promise<void>  {
+        const token =  await this.authService.login(userDto);
+        res.status(HttpStatus.OK).cookie('refreshToken', token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
     @ApiOperation({summary: 'регистрация пользователя'})
@@ -90,10 +88,9 @@ export class AuthController {
     @UsePipes(ValidationPipe)
     @Post("/registration")
     async registration(@Body() userDto: CreateUserDto,
-                 @Res({ passthrough: true }) res: Response): Promise<string> {
-        const userInfo =  await this.authService.registration(userDto);
-        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
-        return userInfo;
+                 @Res({ passthrough: true }) res: Response): Promise<void> {
+        const token =  await this.authService.registration(userDto);
+        res.status(HttpStatus.OK).cookie('refreshToken', token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
     @ApiOperation({summary: 'выход из аккаунта'})
@@ -113,11 +110,10 @@ export class AuthController {
     @Post('/refresh')
     async refresh(@Body() userDto: AuthUserDto,
                   @Req() request: Request,
-                  @Res({ passthrough: true }) res: Response) : Promise<string>   {
+                  @Res({ passthrough: true }) res: Response) : Promise<void>   {
 
-        const userInfo =  await this.authService.login(userDto);
-        res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
-        return userInfo;
+        const token =  await this.authService.login(userDto);
+        res.status(HttpStatus.OK).cookie('refreshToken', token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
     @ApiOperation({summary: 'проверка емайл'})
