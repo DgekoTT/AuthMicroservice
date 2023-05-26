@@ -1,29 +1,31 @@
 import {AuthController} from "./auth.controller";
 import {Test, TestingModule} from "@nestjs/testing";
 import {AuthService} from "./auth.service";
-import {AuthModule} from "./auth.module";
-import {JwtModule} from "@nestjs/jwt";
-import {UsersModule} from "../users/users.module";
+import { MailService } from "../mailer/mail.service";
+import { MailerService } from "@nestjs-modules/mailer";
 
 describe("test controller auth", () => {
     let controller: AuthController;
-    const mockAuthService = {};
+    let spyService: AuthService;
+    const mockAuthService = {
+
+    };
 
     beforeEach(async () => {
-
         const module: TestingModule = await Test.createTestingModule({
             controllers: [AuthController],
-            providers: [AuthService],
-            imports: [AuthModule,
-                JwtModule,
-                UsersModule
-            ]
+            providers: [
+                AuthService,
+                MailService,
+                MailerService
+            ],
         })
             .overrideProvider(AuthService)
             .useValue(mockAuthService)
             .compile();
 
         controller = module.get<AuthController>(AuthController);
+        spyService = module.get<AuthService>(AuthService);
     });
 
     it('should be defined', () => {

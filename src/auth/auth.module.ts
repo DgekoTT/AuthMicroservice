@@ -17,6 +17,7 @@ import {VkStrategy} from "./strategy/vk/vk.strategy";
 import {JwtAuthGuard} from "./jwt-auth.guard";
 import {RolesGuard} from "./role.guard";
 import {ConfigModule} from "@nestjs/config";
+import { MailService } from 'src/mailer/mail.service';
 
 
 @Module({
