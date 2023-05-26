@@ -22,7 +22,8 @@ export class UsersController {
 
     constructor(private userService: UsersService,
                 //подключаем микросервис профиля
-                @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
+                // @Inject("AUTH_SERVICE") private readonly client: ClientProxy
+                ) {
     }
 
 

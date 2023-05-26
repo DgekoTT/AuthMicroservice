@@ -17,6 +17,7 @@ import {JwtService} from "@nestjs/jwt";
 import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {User} from "../users/user.model";
+import {UserInfo} from "../interfaces/countries.interfaces";
 
 
 @Injectable()
@@ -103,5 +104,15 @@ export class AuthService {
         await this.mailService.sendMailVerification(user.email, tokenVerification);
         // возрашает токен на основе данных пользователя
         return token;
+    }
+
+    getUserInfo(refreshToken: any): UserInfo {
+       const info = this.jwtService.verify(refreshToken, {secret: "FFFGKJKFWMV"})
+       return {
+           email: info.email,
+           id: info.id,
+           roles: info.roles.map(el => el.value),
+           displayName: info.displayName
+       };
     }
 }

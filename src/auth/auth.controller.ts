@@ -13,6 +13,7 @@ import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
+import {UserInfo} from "../interfaces/countries.interfaces";
 
 
 
@@ -33,6 +34,14 @@ export class AuthController {
         const userInfo =  await this.authService.registrationAdmin(userDto);
         res.cookie('refreshToken', userInfo, {maxAge: 30 * 24 * 60 *60 *1000, httpOnly: true})
         return userInfo;
+    }
+
+    @ApiOperation({summary: 'получение данных пользователя'})
+    @ApiResponse({status: 200, description: 'Успешный запрос', type: Object, isArray: false})
+    @Get("/user/info")
+    async getUserInfo(@Req() request: Request): Promise<UserInfo> {
+        const refreshToken= (request as any).cookies.refreshToken
+        return this.authService.getUserInfo(refreshToken);
     }
 
     @ApiOperation({summary: 'логин при помощи гугла'})
