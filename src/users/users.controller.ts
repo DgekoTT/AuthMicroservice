@@ -20,9 +20,9 @@ import {ApiCookieAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 @Controller('users')
 export class UsersController {
 
-    constructor(private userService: UsersService,
+    constructor(private userService: UsersService,){
                 //подключаем микросервис профиля
-                @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
+               // @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {
     }
 
 

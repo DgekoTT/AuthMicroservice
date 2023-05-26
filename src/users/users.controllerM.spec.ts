@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesGuard } from '../auth/role.guard';
 import { of } from 'rxjs';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsersController', () => {
     let controller: UsersController;
@@ -12,7 +13,10 @@ describe('UsersController', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [UsersController],
-            providers: [UsersService],
+            providers: [
+                    UsersService,
+                    JwtService
+                    ]
         })
             .overrideGuard(RolesGuard)
             .useValue({ canActivate: () => true }) // чтобы пропустить проверку на роль
