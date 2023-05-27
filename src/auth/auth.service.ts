@@ -17,7 +17,7 @@ import {JwtService} from "@nestjs/jwt";
 import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {User} from "../users/user.model";
-import {UserInfo} from "../interfaces/countries.interfaces";
+import {UserInfo} from "../interfaces/userInfo.interfaces";
 
 
 @Injectable()

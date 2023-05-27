@@ -16,7 +16,7 @@ import Cookies from "nodemailer/lib/fetch/cookies";
 import {UsersService} from "../users/users.service";
 import {CheckMailDto} from "./dto/check-mail.dto";
 import {CheckNameDto} from "./dto/check-name.dto";
-import {UserInfo} from "../interfaces/countries.interfaces";
+import {UserInfo} from "../interfaces/userInfo.interfaces";
 
 
 
