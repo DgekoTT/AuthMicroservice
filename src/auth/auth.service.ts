@@ -17,6 +17,7 @@ import {JwtService} from "@nestjs/jwt";
 import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {User} from "../users/user.model";
+import {UserInfo} from "../interfaces/countries.interfaces";
 
 
 @Injectable()
@@ -76,7 +77,7 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogleOrVk(info): Promise<any> {
+    async validateGoogleOrVk(info): Promise<[User, string]>  {
         const user = await this.userService.getUserByEmail(info.email)
         if(user){
             return [user, await this.tokenService.findToken(user.id)];
@@ -99,5 +100,15 @@ export class AuthService {
         await this.mailService.sendMailVerification(user.email, tokenVerification);
         // возрашает токен на основе данных пользователя
         return token;
+    }
+
+    getUserInfo(refreshToken: any): UserInfo {
+       const info = this.jwtService.verify(refreshToken, {secret: "FFFGKJKFWMV"})
+       return {
+           email: info.email,
+           id: info.id,
+           roles: info.roles.map(el => el.value),
+           displayName: info.displayName
+       };
     }
 }
