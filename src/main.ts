@@ -17,7 +17,7 @@ async function auth() {
       }))
 
   app.enableCors({
-      origin: "*",
+      origin: "http://localhost:5010",
       credentials: true,// отвечает за куки
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       preflightContinue: false,
