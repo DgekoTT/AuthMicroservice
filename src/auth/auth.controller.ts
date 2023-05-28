@@ -62,7 +62,13 @@ export class AuthController {
     googleRedirect(@Req() req: Request,
                    @Res({ passthrough: true }) res: Response) {
 
-        res.status(HttpStatus.OK).cookie('refreshToken', req.user[1], {httpOnly: true})
+        res.cookie('refreshToken', req.user[1], {
+            httpOnly: true,
+            path: '/',
+            domain: 'localhost',
+        });
+
+        res.status(HttpStatus.OK).send('Cookie set successfully!');
     }
 
     @ApiOperation({summary: 'логин при помощи VK'})
@@ -78,7 +84,13 @@ export class AuthController {
     vkRedirect(@Req() req: Request,
                @Res({ passthrough: true }) res: Response) {
 
-        res.status(HttpStatus.OK).cookie('refreshToken', req.user[1], {httpOnly: true})
+        res.cookie('refreshToken', req.user[1], {
+            httpOnly: true,
+            path: '/',
+            domain: 'localhost',
+        });
+
+        res.status(HttpStatus.OK).send('Cookie set successfully!');
     }
 
     @ApiOperation({summary: 'логин при помощи email'})
