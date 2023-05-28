@@ -13,7 +13,7 @@ export class SessionSerializer extends PassportSerializer {
         done(null, user)
     }
     async deserializeUser(payload: any, done: Function): Promise<any> {
-      const user = await this.authService.findGoogleUser(payload.id);
+      const user = await this.authService.findGoogleOrVkUser(payload[0].id);
       return user ? done(null, user) : done(null, null);
     }
 }

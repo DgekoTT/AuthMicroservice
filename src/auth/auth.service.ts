@@ -85,7 +85,7 @@ export class AuthService {
         return await this.userService.createUser(info);
     }
 
-    async findGoogleUser(id: number) : Promise<User> {
+    async findGoogleOrVkUser(id: number) : Promise<User> {
         return await this.userService.getUserById(id);
     }
 
