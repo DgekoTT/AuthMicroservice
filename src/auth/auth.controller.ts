@@ -54,13 +54,13 @@ export class AuthController {
     @Get('google/login')
     @UseGuards(GoogleGuard)
     googleLogin(@Req() req: Request,
-                @Res({ passthrough: true }) res: Response) {
+                @Res({ passthrough: true }) res: Response) : void {
     }
 
     @Get('google/redirect')
     @UseGuards(GoogleGuard)
     googleRedirect(@Req() req: Request,
-                   @Res({ passthrough: true }) res: Response) {
+                   @Res({ passthrough: true }) res: Response) : void {
 
         res.cookie('refreshToken', req.user[1], {
             httpOnly: true,
@@ -82,7 +82,7 @@ export class AuthController {
     @Get('vkontakte/callback')
     @UseGuards(VKGuard)
     vkRedirect(@Req() req: Request,
-               @Res({ passthrough: true }) res: Response) {
+               @Res({ passthrough: true }) res: Response) : void {
 
         res.cookie('refreshToken', req.user[1], {
             httpOnly: true,
@@ -139,7 +139,7 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false})
     @UsePipes(ValidationPipe)
     @Post('/email')
-    async checkMail(@Body() email: CheckMailDto) {
+    async checkMail(@Body() email: CheckMailDto) : Promise<string> {
         console.log(email)
         return this.userService.checkEmail(email.email)
     }
@@ -148,21 +148,8 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: String, isArray: false} )
     @UsePipes(ValidationPipe)
     @Post('/name')
-    async checkName(@Body() name: CheckNameDto) {
+    async checkName(@Body() name: CheckNameDto) : Promise<string> {
         return this.userService.getUserByName(name.displayName)
     }
-
-
-    @Get('status')
-    user(@Req() request: Request) {
-        console.log(request.user);
-        if (request.user) {
-            return { msg: 'Authenticated' };
-        } else {
-            return { msg: 'Not Authenticated' };
-        }
-    }
-
-
 
 }
