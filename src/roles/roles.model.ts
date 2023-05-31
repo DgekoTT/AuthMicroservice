@@ -3,11 +3,9 @@ import {BelongsToMany, Column, DataType, Model, Table} from "sequelize-typescrip
 import {User} from "../users/user.model";
 import {UserRoles} from "./user-role.model";
 import {ApiProperty} from "@nestjs/swagger";
+import {RoleCreationAttrs} from "../interfaces/roles.interfaces";
 
-interface RoleCreationAttrs {
-    value: string;
-    description: string;
-}
+
 
 @Table({tableName: 'roles'})//появится таблица с именем roles
 export class Role extends Model<Role, RoleCreationAttrs> {

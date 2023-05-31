@@ -1,12 +1,8 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {User} from "../users/user.model";
 import {ApiProperty} from "@nestjs/swagger";
+import {TokenCreationAttrs} from "../interfaces/token.interfaces";
 
-interface TokenCreationAttrs {
-    id: number;
-    userId: number;
-    refreshToken: string;
-}
 
 @Table({tableName: "Token"})
 export class Token extends Model<User, TokenCreationAttrs> {

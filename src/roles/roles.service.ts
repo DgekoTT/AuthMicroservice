@@ -1,6 +1,5 @@
 //nest generate service roles создано командой
 
-
 import { Injectable } from '@nestjs/common';
 import {CreateRoleDto} from "./dto/create-role.dto";
 import {InjectModel} from "@nestjs/sequelize";

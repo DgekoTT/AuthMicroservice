@@ -4,15 +4,9 @@ import {Role} from "../roles/roles.model";
 import {UserRoles} from "../roles/user-role.model";
 import {Token} from "../token/token.model";
 import {ApiProperty} from "@nestjs/swagger";
+import {USerCreationAttrs} from "../interfaces/userInfo.interfaces";
 
 
-interface USerCreationAttrs {
-    email: string;
-    password: string;
-    displayName: string;
-    provider: string;
-    verificationStatus?: boolean;
-}
 
 @Table({tableName: 'users'})//появится таблица с именем users
 export class User extends Model<User, USerCreationAttrs> {

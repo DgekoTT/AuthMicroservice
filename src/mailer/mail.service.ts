@@ -16,7 +16,7 @@ export class MailService {
         });
     }
 
-    sendMailPass(email: string, password: string){
+    sendMailPass(email: string, password: string): void{
         this.mailService.sendMail({
             to: `${email}`,
             from: 'f1lm.new@yandex.ru',

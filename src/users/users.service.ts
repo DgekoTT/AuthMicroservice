@@ -45,7 +45,7 @@ export class UsersService {
         return [user, token];
     }
 
-    async getAllUser() {
+    async getAllUser(): Promise<User[]> {
         return await this.userRepository.findAll({include: {all: true}});
     }
 
@@ -53,7 +53,7 @@ export class UsersService {
         const user = await this.userRepository.findOne({where: { email: email}})
         return (user) ? `Пользователь с таким ${user.email} уже существует` : email
     }
-    async getUserByEmail(email: string): Promise<User> {
+    async getUserByEmail(email: string) : Promise<User> {
         return  await this.userRepository.findOne({where: {email: email}, include: {all: true}})
     }
 
@@ -62,7 +62,7 @@ export class UsersService {
          return (user) ? `Пользователь с таким ${user.displayName} уже существует` : displayName
     }
 
-    async addRole(dto: AddRoleDto) {
+    async addRole(dto: AddRoleDto) : Promise<AddRoleDto> {
         const user = await this.userRepository.findByPk(dto.userId);
         const role = await this.roleService.getRoleByValue(dto.value);
         if (role && user) {
@@ -72,7 +72,7 @@ export class UsersService {
         throw  new HttpException('Подьзователь или роль не найдены', HttpStatus.NOT_FOUND);
     }
 
-    async ban(dto: BanUserDto) {
+    async ban(dto: BanUserDto) : Promise<User>   {
         const user = await this.userRepository.findByPk(dto.userId);
         if (!user) {
             throw new HttpException('Подьзователь не найдены', HttpStatus.NOT_FOUND);
@@ -84,14 +84,14 @@ export class UsersService {
     }
 
 
-    async delUser(data: number): Promise<[User, string]> {
+    async delUser(data: number) : Promise<[User, string]> {
         const user = await this.checkUser(data);
         const res = await this.delPhase(data);
         return [user, res];
     }
 
 
-    async delPhase(data: number): Promise<string> {
+    async delPhase(data: number) : Promise<string> {
         try {
             const success = await this.userRepository.destroy({
                 where: {
@@ -120,7 +120,7 @@ export class UsersService {
         return await this.checkUser(id);
     }
 
-    async findByVerificationToken(token: string) {
+    async findByVerificationToken(token: string)  : Promise<User>  {
         return await this.userRepository.findOne({
             where: {
                 verificationToken: token
@@ -150,7 +150,7 @@ export class UsersService {
 
 
 
-    async createUserAdmin(dto: CreateUserDto) {
+    async createUserAdmin(dto: CreateUserDto)  : Promise<any>  {
         let user;
         if (dto.password) {
             //создаем пользователя

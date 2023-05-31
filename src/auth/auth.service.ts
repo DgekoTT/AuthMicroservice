@@ -89,7 +89,7 @@ export class AuthService {
         return await this.userService.getUserById(id);
     }
 
-    async registrationAdmin(userDto: CreateUserDto) {
+    async registrationAdmin(userDto: CreateUserDto) : Promise<string> {
         // получаем закодированный пароль
         const hasPassword = await bcrypt.hash(userDto.password, 6);
         // создаем токен для активации по почте

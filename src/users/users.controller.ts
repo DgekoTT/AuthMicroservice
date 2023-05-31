@@ -9,7 +9,6 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import {ValidationPipe} from "../pipes/validation.pipe";
 import {Roles} from "../auth/roles-auth.decorator";
 import {RolesGuard} from "../auth/role.guard";
-import {ClientProxy} from "@nestjs/microservices";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {ApiCookieAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 
@@ -20,12 +19,7 @@ import {ApiCookieAuth, ApiOperation, ApiResponse} from "@nestjs/swagger";
 @Controller('users')
 export class UsersController {
 
-    constructor(private userService: UsersService,
-                //подключаем микросервис профиля
-                // @Inject("AUTH_SERVICE") private readonly client: ClientProxy
-                ) {
-    }
-
+    constructor(private userService: UsersService) {}
 
     @ApiOperation({summary: 'создание пользователя'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
