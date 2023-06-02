@@ -75,7 +75,11 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('vkontakte/login')
     @UseGuards(VKGuard)
-    vkLogin() {
+    vkLogin( @Res({ passthrough: true }) res: Response) {
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Methods', 'GET');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+        res.status(HttpStatus.OK)
         return { msg: "VK Авторизация"};
     }
 
