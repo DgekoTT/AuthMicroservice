@@ -65,7 +65,7 @@ export class UsersController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: true})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
-    @Delete('del:id')
+    @Delete('/del/:id')
     async delUser(@Param('id') id: number): Promise<[User, string]> {
         return await this.userService.delUser(id);
     }
@@ -75,7 +75,7 @@ export class UsersController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: User, isArray: false})
     @Roles("admin")
     @UseGuards(RolesGuard) // проверка на роли, получить доступ сможет только админ
-    @Get('/:id')
+    @Get('/id/:id')
     async getUser(@Param('id') id: number): Promise<User> {
         return await this.userService.getUserById(id);
     }
