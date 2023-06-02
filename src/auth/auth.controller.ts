@@ -90,6 +90,10 @@ export class AuthController {
             domain: 'localhost',
         });
 
+        // Добавляем заголовки CORS
+        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+        res.setHeader('Access-Control-Allow-Methods', 'GET');
+        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         res.status(HttpStatus.OK).send('Cookie set successfully!');
     }
 
