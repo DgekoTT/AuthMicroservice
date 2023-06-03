@@ -9,7 +9,6 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import {ClientProxy} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
-import {VKGuard} from "./strategy/vk/vk.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
 import {UsersService} from "../users/users.service";
@@ -65,7 +64,7 @@ export class AuthController {
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('vkontakte/login')
-    @UseGuards(VKGuard)
+
     vkLogin( @Res({ passthrough: true }) res: Response) {
         res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
         res.setHeader('Access-Control-Allow-Methods', 'GET');
@@ -75,7 +74,7 @@ export class AuthController {
     }
 
     @Get('vkontakte/callback')
-    @UseGuards(VKGuard)
+
     vkRedirect(@Req() req: Request,
                @Res({ passthrough: true }) res: Response) : void {
 

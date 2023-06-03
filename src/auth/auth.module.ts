@@ -10,18 +10,16 @@ import {TokenModule} from "../token/token.module";
 import {UsersModule} from "../users/users.module";
 import {ClientsModule, Transport} from "@nestjs/microservices";
 import {MailModule} from "../mailer/mail.module";
-import {GoogleStrategy} from "./strategy/google/google.strategy";
 import {PassportModule} from "@nestjs/passport";
-import {SessionSerializer} from "./strategy/google/Serializer";
-import {VkStrategy} from "./strategy/vk/vk.strategy";
 import {JwtAuthGuard} from "./jwt-auth.guard";
 import {RolesGuard} from "./role.guard";
 import {ConfigModule} from "@nestjs/config";
+import {GoogleLogin} from "./strategy/google/googleLogin";
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, VkStrategy, SessionSerializer, JwtAuthGuard, RolesGuard],
+  providers: [AuthService, JwtAuthGuard, RolesGuard, GoogleLogin,],
   imports: [ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`   /*получаем конфигурации
   для разработки и для продакшена, нужно npm i cross-env*/
