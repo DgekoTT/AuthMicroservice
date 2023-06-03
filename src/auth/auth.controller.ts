@@ -9,7 +9,6 @@ import {ValidationPipe} from "../pipes/validation.pipe";
 import {CreateUserDto} from "../users/dto/create-user.dto";
 import {ClientProxy} from "@nestjs/microservices";
 import {MailService} from "../mailer/mail.service";
-import {GoogleGuard} from "./strategy/google/google.guard";
 import {VKGuard} from "./strategy/vk/vk.guard";
 import {ApiOperation, ApiResponse, ApiTags} from "@nestjs/swagger";
 import Cookies from "nodemailer/lib/fetch/cookies";
@@ -17,6 +16,8 @@ import {UsersService} from "../users/users.service";
 import {CheckMailDto} from "./dto/check-mail.dto";
 import {CheckNameDto} from "./dto/check-name.dto";
 import {UserInfo} from "../interfaces/userInfo.interfaces";
+import {GoogleLogin} from "./strategy/google/googleLogin";
+import {GoogleLoginDto} from "./dto/login.google.dto";
 
 
 
@@ -27,6 +28,7 @@ export class AuthController {
     constructor(private authService: AuthService,
                 private mailService: MailService,
                 private userService: UsersService,
+                private googleService: GoogleLogin,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     @ApiOperation({summary: 'регистрация admin'})
@@ -52,24 +54,13 @@ export class AuthController {
     @ApiOperation({summary: 'логин при помощи гугла'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('google/login')
-    @UseGuards(GoogleGuard)
-    googleLogin(@Req() req: Request,
+    googleLogin(@Body() userDto: GoogleLoginDto,
                 @Res({ passthrough: true }) res: Response) : void {
+        const token =   this.googleService.googleLogin(userDto);
+        res.status(HttpStatus.OK).cookie('refreshToken', token[1], { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
     }
 
-    @Get('google/redirect')
-    @UseGuards(GoogleGuard)
-    googleRedirect(@Req() req: Request,
-                   @Res({ passthrough: true }) res: Response) : void {
-
-        res.cookie('refreshToken', req.user[1], {
-            httpOnly: true,
-            path: '/',
-            domain: 'localhost',
-        });
-
-        res.status(HttpStatus.OK).send('Cookie set successfully!');
-    }
 
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})

@@ -85,9 +85,6 @@ export class AuthService {
         return await this.userService.createUser(info);
     }
 
-    async findGoogleOrVkUser(id: number) : Promise<User> {
-        return await this.userService.getUserById(id);
-    }
 
     async registrationAdmin(userDto: CreateUserDto) : Promise<string> {
         // получаем закодированный пароль
