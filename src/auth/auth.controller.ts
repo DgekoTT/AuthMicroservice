@@ -53,9 +53,9 @@ export class AuthController {
     @ApiOperation({summary: 'логин при помощи гугла'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Post('google/login')
-    googleLogin(@Body() userDto: GoogleLoginDto,
-                @Res({ passthrough: true }) res: Response) : void {
-        const token =   this.googleService.googleLogin(userDto);
+    async googleLogin(@Body() userDto: GoogleLoginDto,
+                @Res({ passthrough: true }) res: Response)  {
+        const token = await this.googleService.googleLogin(userDto);
         res.status(HttpStatus.OK).cookie('refreshToken', token[1], { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
