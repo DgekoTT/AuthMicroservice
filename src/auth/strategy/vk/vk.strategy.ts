@@ -8,7 +8,7 @@ export class VkStrategy extends PassportStrategy(Strategy) {
         super({
             clientID: '51641490',
             clientSecret: 'GKbNTcvNwoMb6ZsIssAT',
-            callbackURL: 'http://localhost:5010/auth/vkontakte/callback',
+            callbackURL: 'http://localhost:3000',
             scope: ['profile', 'email'],
             }, async function validate (
                 accessToken: string,
