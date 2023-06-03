@@ -7,7 +7,6 @@ import {AuthService} from "../../auth.service";
 export class GoogleLogin {
     constructor(
         private authService: AuthService,
-        private userService: UsersService,
     ) {}
 
     async googleLogin(UserData) {
