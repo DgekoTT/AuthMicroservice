@@ -83,6 +83,7 @@ export class AuthService {
         const user = await this.userService.getUserByEmail(info.email)
         if(user){
             const token = await this.tokenService.findToken(user.id)
+            console.log('token =========', token)
             return [user, token];
         }
         return await this.userService.createUser(info);
