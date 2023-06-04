@@ -60,6 +60,7 @@ export class AuthController {
                 @Res({ passthrough: true }) res: Response)  {
         console.log(userDto)
         const token = await this.googleService.googleLogin(userDto);
+        console.log(token)
         res.status(HttpStatus.OK).cookie('refreshToken', token[1], { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
