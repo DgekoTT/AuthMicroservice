@@ -17,6 +17,8 @@ import {CheckNameDto} from "./dto/check-name.dto";
 import {UserInfo} from "../interfaces/userInfo.interfaces";
 import {GoogleLogin} from "./strategy/google/googleLogin";
 import {GoogleLoginDto} from "./dto/login.google.dto";
+import {VkLogin} from "./strategy/vk/vk.strategy";
+import { serialize } from 'cookie';
 
 
 
@@ -28,6 +30,7 @@ export class AuthController {
                 private mailService: MailService,
                 private userService: UsersService,
                 private googleService: GoogleLogin,
+                private VkService: VkLogin,
                 @Inject("AUTH_SERVICE") private readonly client: ClientProxy) {}
 
     @ApiOperation({summary: 'регистрация admin'})
@@ -64,32 +67,20 @@ export class AuthController {
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Get('vkontakte/login')
+    async vkLogin(@Body() code: string, @Res({ passthrough: true }) res: Response) {
 
-    vkLogin( @Res({ passthrough: true }) res: Response) {
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Methods', 'GET');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-        res.status(HttpStatus.OK)
-        return { msg: "VK Авторизация"};
-    }
+            const token = await this.VkService.VkLogin(code);
+        const refreshToken = token[1];
+        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-    @Get('vkontakte/callback')
-
-    vkRedirect(@Req() req: Request,
-               @Res({ passthrough: true }) res: Response) : void {
-
-        res.cookie('refreshToken', req.user[1], {
+        res.setHeader('Set-Cookie', serialize('refreshToken', refreshToken, {
+            maxAge,
             httpOnly: true,
-            path: '/',
-            domain: 'localhost',
-        });
-
-        // Добавляем заголовки CORS
-        res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-        res.setHeader('Access-Control-Allow-Methods', 'GET');
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-        res.status(HttpStatus.OK).send('Cookie set successfully!');
+        }));
+        res.redirect('http://localhost:3000');
     }
+
+
 
     @ApiOperation({summary: 'логин при помощи email'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
