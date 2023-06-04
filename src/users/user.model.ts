@@ -17,7 +17,7 @@ export class User extends Model<User, USerCreationAttrs> {
     id: number;
 
     @ApiProperty({example: 'Петя', description: 'имя, ник или имя и фамилия пользователя'})
-    @Column({type: DataType.STRING, unique: true, allowNull: false})
+    @Column({type: DataType.STRING, allowNull: false})
     displayName: string;
 
     @ApiProperty({example: 'user@gmail.com', description: 'почта пользователя'})
