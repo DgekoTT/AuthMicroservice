@@ -15,16 +15,18 @@ import {JwtAuthGuard} from "./jwt-auth.guard";
 import {RolesGuard} from "./role.guard";
 import {ConfigModule} from "@nestjs/config";
 import {GoogleLogin} from "./strategy/google/googleLogin";
+import {VkLogin} from "./strategy/vk/vk.strategy";
+import {HttpModule} from "@nestjs/axios";
 
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, RolesGuard, GoogleLogin,],
+  providers: [AuthService, JwtAuthGuard, RolesGuard, GoogleLogin, VkLogin],
   imports: [ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`   /*получаем конфигурации
   для разработки и для продакшена, нужно npm i cross-env*/
   }),
-      MailModule, ClientsModule.register([
+      MailModule, HttpModule, ClientsModule.register([
       {
           name: 'AUTH_SERVICE',
           transport: Transport.RMQ,
