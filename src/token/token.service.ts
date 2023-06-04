@@ -12,7 +12,8 @@ export class TokenService {
 
       async generateToken(user: User): Promise<string>  {
         const payload = {email: user.email, id: user.id, roles: user.roles, displayName: user.displayName}
-        return  this.jwtService.sign(payload);
+        console.log(33333333, payload)
+          return  this.jwtService.sign(payload);
     }
 
      async saveToken(userId: number, refreshToken: string): Promise<Token> {

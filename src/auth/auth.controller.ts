@@ -1,6 +1,6 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, HttpStatus, Inject, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {Body, Controller, Get, HttpStatus, Inject, Param, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
 import {AuthService} from "./auth.service";
 import {Response} from "express";
 import {Request} from  "express";
@@ -66,10 +66,12 @@ export class AuthController {
 
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
-    @Get('vkontakte/login')
-    async vkLogin(@Body() code: string, @Res({ passthrough: true }) res: Response) {
+    @Get('vkontakte/:login')
+    async vkLogin( @Param() info: string, @Res({ passthrough: true }) res: Response) {
 
-            const token = await this.VkService.VkLogin(code);
+        console.log(info)
+
+        const token = await this.VkService.VkLogin(info);
         const refreshToken = token[1];
         const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
 

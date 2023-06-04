@@ -34,6 +34,7 @@ export class UsersService {
         } else {
             user = await this.makeGoogleOrVkUser(dto);
         }
+        console.log(22222, user)
         //получаем роль из базы
         const role = await this.roleService.getRoleByValue("user");
         //перезаписаваем значение атрибу роль у пользователя в виде ид роли
