@@ -21,11 +21,11 @@ export class VkLogin  {
         };
 
         const host="http://localhost:3000";
-        const redirect_link='/login';
+
 
         return firstValueFrom(
             this.http.get(
-                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}${redirect_link}&code=${key.code}`,
+                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}&code=${key.code}`,
             ),
         );
     }
