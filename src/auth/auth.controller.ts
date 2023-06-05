@@ -80,7 +80,7 @@ export class AuthController {
 
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
-    @Get('vkontakte/login')
+    @Post('vkontakte/login')
     async vkLogin( @Query() info: VkLoginDto, @Res({ passthrough: true }) res: Response) {
         console.log(info)
 

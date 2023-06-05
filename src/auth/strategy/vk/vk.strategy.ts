@@ -16,16 +16,17 @@ export class VkLogin  {
 
     async getToken(key: VkLoginDto): Promise<any> {
         const adminKey = {
-            clientID: '51641490',
-            clientSecret: 'GKbNTcvNwoMb6ZsIssAT',
+            clientID: '51666090',
+            clientSecret: 'qYJ3GwZTg2lCBfciUehT',
         };
 
         const host="http://localhost:3000";
-
+        const link = '';
+        console.log(key.code)
 
         return firstValueFrom(
             this.http.get(
-                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}&code=${key.code}`,
+                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}${link}&code=${key.code}`,
             ),
         );
     }
@@ -45,6 +46,7 @@ export class VkLogin  {
         try {
             userInfo = await this.getToken(code);
         } catch (err) {
+            console.log(err)
             throw new HttpException('ОШибка входа', HttpStatus.BAD_REQUEST);
         }
 
