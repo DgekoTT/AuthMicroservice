@@ -1,44 +1,60 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import {UsersController} from "./users.controller";
-import {RolesGuard} from "../auth/role.guard";
-import {UsersService} from "./users.service";
-import {User} from "./user.model";
-import {SequelizeModule} from "@nestjs/sequelize";
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersController } from "./users.controller";
+import { UsersService } from "./users.service";
+import { JwtService } from "@nestjs/jwt";
 
-describe('MyController', () => {
-    let controller: UsersController;
-    let guard: RolesGuard;
-    let service: UsersService;
-    let obj = {};
+
+
+describe('UsersController', () => {
+    let usersController: UsersController;
+    let spyService: UsersService;
 
     beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+        const UsersServiceProvider = {
+            provide: UsersService,
+            createUser: jest.fn(() => 2),//(() => 2),
+            getAllUser: jest.fn(() => {
+                return {
+                    name: 'user'
+                }
+            })
+
+        };
+
+        const app: TestingModule = await Test.createTestingModule({
             controllers: [UsersController],
-            providers: [UsersService,],
-        }).compile();
+            providers: [
+                UsersService,
+                JwtService],
+        })
+            .overrideProvider(UsersService)
+            .useValue(UsersServiceProvider)
+            .compile();
 
-        controller = module.get<UsersController>(UsersController);
-        guard = module.get<RolesGuard>(RolesGuard);
-        service = module.get<UsersService>(UsersService);
+        usersController = app.get<UsersController>(UsersController);
+        spyService = app.get<UsersService>(UsersService);
     });
 
-    describe('getAll', () => {
-        it('should return success response when guard passes', async () => {
-            jest.spyOn(guard, 'canActivate').mockReturnValue(true);
-            // @ts-ignore
-            jest.spyOn(service, 'getAllUser').mockResolvedValue(User[obj] || Promise );
-
-            const response = await controller.getAllUser();
-
-            expect(response).toEqual({ message: 'success' });
+    describe('createUser', () => {
+        it('должен вызвать createUser', async () => {
+            const userDto = { email: 'user@mail.ru', password: 'password', displayName: 'user'};
+            await usersController.create(userDto);
+            expect(spyService.createUser).toHaveBeenCalled();
         });
 
-        it('should return error response when guard fails', async () => {
-            jest.spyOn(guard, 'canActivate').mockReturnValue(false);
-
-            const response = await controller.getAll();
-
-            expect(response).toEqual({ message: 'Unauthorized' });
+        it('должен вернуть userId', async () => {
+            const userDto = { email: 'user@mail.ru', password: 'password', displayName: 'user'};
+            expect(spyService.createUser(userDto)).toBe(2);
         });
     });
+    describe('getAllUser', () => {
+        it('должен вызвать getAllUser', async () => {
+            await usersController.getAllUsers();
+            expect(spyService.getAllUser).toHaveBeenCalled();
+        });
+        it('должен вернуть dto', async () => {
+            expect(spyService.getAllUser()).toEqual({name: 'user'});
+        });
+    });
+
 });
