@@ -2,6 +2,7 @@ import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {AuthService} from "../../auth.service";
 import {HttpService} from "@nestjs/axios";
 import {firstValueFrom} from "rxjs";
+import {VkLoginDto} from "../../dto/login.Vk.dto";
 
 
 
@@ -13,7 +14,7 @@ export class VkLogin  {
                 private http: HttpService) {}
 
 
-    async getToken(key: string): Promise<any> {
+    async getToken(key: VkLoginDto): Promise<any> {
         const adminKey = {
             clientID: '51641490',
             clientSecret: 'GKbNTcvNwoMb6ZsIssAT',
@@ -24,7 +25,7 @@ export class VkLogin  {
 
         return firstValueFrom(
             this.http.get(
-                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}${redirect_link}&code=${key}`,
+                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}${redirect_link}&code=${key.code}`,
             ),
         );
     }
@@ -38,7 +39,7 @@ export class VkLogin  {
     }
 
 
-    async VkLogin(code: string){
+    async VkLogin(code: VkLoginDto){
         let userInfo;
 
         try {

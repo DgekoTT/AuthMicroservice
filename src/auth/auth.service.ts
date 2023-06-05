@@ -18,6 +18,7 @@ import * as crypto from 'crypto';
 import {MailService} from "../mailer/mail.service";
 import {User} from "../users/user.model";
 import {UserInfo} from "../interfaces/userInfo.interfaces";
+import {CreateUserVkGoogleDto} from "../users/dto/create-VkUserGoogle.dto";
 
 
 @Injectable()
@@ -50,7 +51,7 @@ export class AuthService {
     }
 
 
-    private async validateUser(userDto: AuthUserDto): Promise<User>  {
+  async validateUser(userDto: AuthUserDto): Promise<User>  {
         //находим пользователя по емайл
         const candidate = await this.userService.getUserByEmail(userDto.email);
         // сравниваем пароли из бд и отправленный пользователем
@@ -65,7 +66,7 @@ export class AuthService {
         return await this.tokenService.removeToken(refreshToken);
     }
 
-    private generateVerificationToken(): string {
+   generateVerificationToken(): string {
         return crypto.randomBytes(20).toString('hex');
     }
 
@@ -77,13 +78,10 @@ export class AuthService {
        return await this.userService.updateVerificationStatus(user);
     }
 
-    async validateGoogleOrVk(info): Promise<[User, string]>  {
-        console.log(1111111, info )
-
+    async validateGoogleOrVk(info: CreateUserVkGoogleDto): Promise<[User, string]>  {
         const user = await this.userService.getUserByEmail(info.email)
         if(user){
             const token = await this.tokenService.findToken(user.id)
-            console.log('token =========', token)
             return [user, token];
         }
         return await this.userService.createUser(info);

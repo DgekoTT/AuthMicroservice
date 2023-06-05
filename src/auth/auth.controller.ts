@@ -1,6 +1,19 @@
 //nest generate controller auth создано командой
 
-import {Body, Controller, Get, HttpStatus, Inject, Param, Post, Req, Res, UseGuards, UsePipes} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Get,
+    HttpStatus,
+    Inject,
+    Param,
+    Post,
+    Query,
+    Req,
+    Res,
+    UseGuards,
+    UsePipes
+} from '@nestjs/common';
 import {AuthService} from "./auth.service";
 import {Response} from "express";
 import {Request} from  "express";
@@ -19,6 +32,7 @@ import {GoogleLogin} from "./strategy/google/googleLogin";
 import {GoogleLoginDto} from "./dto/login.google.dto";
 import {VkLogin} from "./strategy/vk/vk.strategy";
 import { serialize } from 'cookie';
+import {VkLoginDto} from "./dto/login.Vk.dto";
 
 
 
@@ -58,18 +72,16 @@ export class AuthController {
     @Post('google/login')
     async googleLogin(@Body() userDto: GoogleLoginDto,
                 @Res({ passthrough: true }) res: Response)  {
-        console.log(userDto)
+
         const token = await this.googleService.googleLogin(userDto);
-        console.log(token)
         res.status(HttpStatus.OK).cookie('refreshToken', token[1], { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
     }
 
 
     @ApiOperation({summary: 'логин при помощи VK'})
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
-    @Get('vkontakte/:login')
-    async vkLogin( @Param() info: string, @Res({ passthrough: true }) res: Response) {
-
+    @Get('vkontakte/login')
+    async vkLogin( @Query() info: VkLoginDto, @Res({ passthrough: true }) res: Response) {
         console.log(info)
 
         const token = await this.VkService.VkLogin(info);
