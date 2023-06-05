@@ -82,12 +82,9 @@ export class AuthController {
     @ApiResponse({status: 200, description: 'Успешный запрос', type: Cookies, isArray: false})
     @Post('vkontakte/login')
     async vkLogin( @Query() info: VkLoginDto, @Res({ passthrough: true }) res: Response) {
-        console.log(info)
-
         const token = await this.VkService.VkLogin(info);
         const refreshToken = token[1];
         const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-
         res.setHeader('Set-Cookie', serialize('refreshToken', refreshToken, {
             maxAge,
             httpOnly: true,

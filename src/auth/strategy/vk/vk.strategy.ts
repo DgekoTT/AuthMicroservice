@@ -21,14 +21,13 @@ export class VkLogin  {
         };
 
         const host="http://localhost:3000";
-        const link = '';
-        console.log(key.code)
 
-        return firstValueFrom(
+        return await firstValueFrom(
             this.http.get(
-                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}${link}&code=${key.code}`,
+                `https://oauth.vk.com/access_token?client_id=${adminKey.clientID}&client_secret=${adminKey.clientSecret}&redirect_uri=${host}&code=${key.code}`,
             ),
         );
+
     }
 
     async getUserFromVk(userId: number, token: string): Promise<any> {
@@ -42,7 +41,6 @@ export class VkLogin  {
 
     async VkLogin(code: VkLoginDto){
         let userInfo;
-
         try {
             userInfo = await this.getToken(code);
         } catch (err) {
@@ -51,14 +49,12 @@ export class VkLogin  {
         }
 
         if (userInfo.data.email) {
-
             return await this.authService.validateGoogleOrVk({
                 email: userInfo.emails[0],
                 displayName: userInfo.displayName,
                 provider: 'VK'
             })
         }
-
         return new HttpException('Укажите почту в ВК', HttpStatus.BAD_REQUEST)
         }
 
