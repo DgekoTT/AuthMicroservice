@@ -5,8 +5,6 @@ import { JwtService } from "@nestjs/jwt";
 
 
 
-//const moduleMocker = new ModuleMocker(global)
-
 describe('check RolesController', () =>{
     let controller: RolesController;
     const mockRolesService = {
