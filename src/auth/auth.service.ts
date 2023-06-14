@@ -81,7 +81,8 @@ export class AuthService {
     async validateGoogleOrVk(info: CreateUserVkGoogleDto): Promise<[User, string]>  {
         const user = await this.userService.getUserByEmail(info.email)
         if(user){
-            const token = await this.tokenService.findToken(user.id)
+            const token =  await this.tokenService.generateToken(user);
+            await this.tokenService.saveToken(user.id, token)
             return [user, token];
         }
         return await this.userService.createUser(info);
